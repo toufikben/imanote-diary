@@ -3,6 +3,7 @@ export type AppAppearance = "blossom" | "noir";
 export type EntryFont = "classic" | "clean" | "mono";
 export type LockKind = "pin" | "password";
 
+export type PhotoAttachment = { id: string; uri: string; name: string; mimeType: string; width?: number; height?: number };
 export type DiaryEntry = {
   id: string;
   title: string;
@@ -12,6 +13,7 @@ export type DiaryEntry = {
   font: EntryFont;
   audioUri?: string;
   audioDurationMs?: number;
+  attachments?: PhotoAttachment[];
 };
 
 export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont };

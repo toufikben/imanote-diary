@@ -16,3 +16,9 @@
 - [x] Check static typing, test the primary local flows, and refine the mobile interface.
 - [x] Create one final project checkpoint for delivery; do not publish or push code to GitHub.
 - [ ] Confirm microphone permission, voice recording, and SecureStore behavior in Expo Go on a physical device.
+- [x] Add persistent private photo attachments to diary memories, including safe local file cleanup.
+- [x] Add a monthly calendar interface to browse memories by date.
+- [x] Add password-encrypted local backup export through the system share sheet.
+- [x] Add password-encrypted local backup import with validation and merge/replace confirmation.
+- [x] Test the new image, calendar, and backup behaviors.
+- [x] Create a new publish-ready checkpoint.

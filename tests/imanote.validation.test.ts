@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
 import { getCopy } from "../lib/imanote/copy";
 import { normalizeSettings, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
@@ -32,5 +33,24 @@ describe("Imanote localization", () => {
     expect(getCopy("ar").diary).toBe("المذكرات");
     expect(getCopy("fr").diary).toBe("Journal");
     expect(getCopy("en").diary).toBe("Diary");
+  });
+});
+
+describe("Imanote encrypted local backups", () => {
+  const payload = {
+    version: 1 as const,
+    createdAt: "2026-08-13T00:00:00.000Z",
+    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const },
+    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
+    files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
+  };
+  it("round-trips a valid backup only with its password", () => {
+    const encrypted = encryptBackupPayload(payload, "four-petal-password");
+    expect(encrypted).not.toContain("A flower");
+    expect(decryptBackupPayload(encrypted, "four-petal-password")).toEqual(payload);
+    expect(() => decryptBackupPayload(encrypted, "wrong-password")).toThrow();
+  });
+  it("rejects malformed backup data before any file restoration", () => {
+    expect(() => validateBackupPayload({ version: 2, entries: [], files: [], settings: {}, createdAt: "today" })).toThrow();
   });
 });
