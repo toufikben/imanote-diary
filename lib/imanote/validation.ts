@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntrySticker, type LockKind } from "./types";
+import { DEFAULT_SETTINGS, MOOD_IDS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntryMood, type EntrySticker, type LockKind } from "./types";
 
 export function isValidLockValue(kind: LockKind, value: string) {
   return kind === "pin" ? /^\d{4}$/.test(value) : value.trim().length >= 4;
@@ -28,4 +28,9 @@ export function sortEntries(entries: DiaryEntry[]) {
 export function normalizeStickers(candidate: unknown): EntrySticker[] {
   if (!Array.isArray(candidate)) return [];
   return Array.from(new Set(candidate.filter((sticker): sticker is EntrySticker => typeof sticker === "string" && STICKER_IDS.includes(sticker as EntrySticker)))).slice(0, 3);
+}
+
+/** Keeps only the single supported mood category for a private diary entry. */
+export function normalizeMood(candidate: unknown): EntryMood | undefined {
+  return typeof candidate === "string" && MOOD_IDS.includes(candidate as EntryMood) ? candidate as EntryMood : undefined;
 }

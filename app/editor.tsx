@@ -5,11 +5,12 @@ import * as ImagePicker from "expo-image-picker";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { PaperPreview, PaperSheet, paperTone, textMetrics } from "@/components/imanote/paper-sheet";
+import { MoodPicker } from "@/components/imanote/mood-tags";
 import { StickerPicker } from "@/components/imanote/sticker-strip";
-import { fontName, fontSizeName, lineSpacingName, paperName, stickerTitle } from "@/lib/imanote/copy";
+import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle } from "@/lib/imanote/copy";
 import { useDiary } from "@/lib/imanote/diary-context";
 import { preservePhotoAttachment, preserveVoiceMemo } from "@/lib/imanote/storage";
-import type { EntryFont, EntryFontSize, EntryLineSpacing, EntrySticker, PaperStyle, PhotoAttachment } from "@/lib/imanote/types";
+import type { EntryFont, EntryFontSize, EntryLineSpacing, EntryMood, EntrySticker, PaperStyle, PhotoAttachment } from "@/lib/imanote/types";
 
 const FONT_OPTIONS: EntryFont[] = ["classic", "clean", "rounded", "mono"];
 const SIZE_OPTIONS: EntryFontSize[] = ["small", "medium", "large"];
@@ -27,6 +28,7 @@ export default function EditorScreen() {
   const [lineSpacing, setLineSpacing] = useState<EntryLineSpacing>(existing?.lineSpacing ?? settings.defaultLineSpacing);
   const [paper, setPaper] = useState<PaperStyle>(existing?.paper ?? settings.defaultPaper);
   const [stickers, setStickers] = useState<EntrySticker[]>(existing?.stickers ?? []);
+  const [mood, setMood] = useState<EntryMood | undefined>(existing?.mood);
   const [audioUri, setAudioUri] = useState<string | undefined>(existing?.audioUri);
   const [duration, setDuration] = useState(existing?.audioDurationMs);
   const [attachments, setAttachments] = useState<PhotoAttachment[]>(existing?.attachments ?? []);
@@ -54,7 +56,7 @@ export default function EditorScreen() {
     const transientAudio = audioUri && audioUri !== existing?.audioUri;
     const savedAudio = transientAudio ? await preserveVoiceMemo(audioUri, entryId) : audioUri;
     const savedAttachments = await Promise.all(attachments.map((attachment) => existing?.attachments?.some((saved) => saved.uri === attachment.uri) ? attachment : preservePhotoAttachment(attachment, entryId)));
-    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
+    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, mood, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
     router.replace({ pathname: "/entry/[id]", params: { id: entry.id } } as any);
   };
 
@@ -67,6 +69,8 @@ export default function EditorScreen() {
     <ScrollView contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.title}</Text>
       <TextInput value={title} onChangeText={setTitle} placeholder={copy.titlePlaceholder} placeholderTextColor={palette.muted} style={[s.titleInput, { color: palette.text, borderBottomColor: palette.border, textAlign: isRTL ? "right" : "left", fontFamily: fontFamily(font) }]} />
+      <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{moodTitle(settings.language)}</Text>
+      <MoodPicker selected={mood} onChange={setMood} palette={palette} language={settings.language} isRTL={isRTL} />
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.font}</Text>
       <View style={[s.fonts, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{FONT_OPTIONS.map((item) => <Pressable key={item} onPress={() => setFont(item)} style={[s.font, { borderColor: font === item ? palette.primary : palette.border, backgroundColor: font === item ? palette.primarySoft : palette.surface }]}><Text style={[s.fontName, { color: palette.text, fontFamily: fontFamily(item) }]}>{fontName(item, settings.language)}</Text><Text style={[s.fontSample, { color: palette.muted, fontFamily: fontFamily(item) }]}>أ ب · Aa</Text></Pressable>)}</View>
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.fontSize}</Text>

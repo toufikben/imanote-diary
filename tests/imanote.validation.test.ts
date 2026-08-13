@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
-import { getCopy } from "../lib/imanote/copy";
+import { getCopy, moodName } from "../lib/imanote/copy";
 import { getLockWolfPeekProgress } from "../lib/imanote/lock-wolf";
-import { normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
+import { normalizeMood, normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
 describe("Imanote privacy validation", () => {
   it("accepts only a four-digit PIN and a non-trivial password", () => {
@@ -38,6 +38,11 @@ describe("Imanote local data normalization", () => {
     expect(normalizeStickers(["flower", "flower", "wolf", "bad", "wolfMoon", "heart"])).toEqual(["flower", "wolf", "wolfMoon"]);
     expect(normalizeStickers("flower")).toEqual([]);
   });
+  it("keeps only one supported local mood tag", () => {
+    expect(normalizeMood("calm")).toBe("calm");
+    expect(normalizeMood("unknown")).toBeUndefined();
+    expect(normalizeMood(["calm"])).toBeUndefined();
+  });
 });
 
 describe("Imanote localization", () => {
@@ -46,6 +51,11 @@ describe("Imanote localization", () => {
     expect(getCopy("fr").diary).toBe("Journal");
     expect(getCopy("en").diary).toBe("Diary");
   });
+  it("provides mood labels in Arabic, French, and English", () => {
+    expect(moodName("calm", "ar")).toBe("هادئ");
+    expect(moodName("calm", "fr")).toBe("Calme");
+    expect(moodName("calm", "en")).toBe("Calm");
+  });
 });
 
 describe("Imanote encrypted local backups", () => {
@@ -53,7 +63,7 @@ describe("Imanote encrypted local backups", () => {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
     settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0 },
-    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
+    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };
   it("round-trips a valid backup only with its password", () => {
@@ -64,5 +74,9 @@ describe("Imanote encrypted local backups", () => {
   });
   it("rejects malformed backup data before any file restoration", () => {
     expect(() => validateBackupPayload({ version: 2, entries: [], files: [], settings: {}, createdAt: "today" })).toThrow();
+  });
+  it("rejects a backup entry with an unsupported mood tag", () => {
+    const malformed = { ...payload, entries: [{ ...payload.entries[0], mood: "unknown" }] };
+    expect(() => validateBackupPayload(malformed)).toThrow();
   });
 });

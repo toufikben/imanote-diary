@@ -78,3 +78,8 @@
 - [x] Upload the approved Imanote lock title, wolf sticker, and count-only animated lock-screen wolf to GitHub.
 - [x] Verify the automated Android validation and build requests started from the uploaded improvements.
 - [x] Reconcile the diverged GitHub main history with the approved local improvements before upload.
+- [x] Define a private local mood-tag model with a compact, inclusive set of moods.
+- [x] Add a multilingual mood-tag selector to the diary editor and persist the chosen mood with each entry.
+- [x] Display the selected mood tag in diary cards and the detailed reading view.
+- [x] Validate mood-tag data in local storage and encrypted backup import/export, with regression tests.
+- [x] Test the mood-tag feature and save a checkpoint before requesting GitHub upload approval.
