@@ -1,13 +1,16 @@
 import "@/global.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
-import { Platform } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { DiaryProvider, useDiary } from "@/lib/imanote/diary-context";
+import { FloralSplash, PrivacyGate } from "@/components/imanote/visuals";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -21,6 +24,18 @@ import { initManusRuntime, subscribeSafeAreaInsets } from "@/lib/_core/manus-run
 
 const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
 const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
+
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
+
+function ImanoteGate() {
+  const { ready, accessState } = useDiary();
+  const [intro, setIntro] = useState(true);
+  useEffect(() => { if (ready) void SplashScreen.hideAsync(); }, [ready]);
+  if (!ready) return <View style={{ flex: 1, backgroundColor: "#C7D1F0", alignItems: "center", justifyContent: "center" }}><ActivityIndicator color="#C65B7C" /></View>;
+  if (intro) return <FloralSplash onFinish={() => setIntro(false)} />;
+  if (accessState !== "unlocked") return <PrivacyGate />;
+  return <><Stack screenOptions={{ headerShown: false }}><Stack.Screen name="(tabs)" /><Stack.Screen name="editor" options={{ presentation: "modal" }} /><Stack.Screen name="entry/[id]" /><Stack.Screen name="oauth/callback" /></Stack><StatusBar style="auto" /></>;
+}
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -82,14 +97,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          {/* Default to hiding native headers so raw route segments don't appear (e.g. "(tabs)", "products/[id]"). */}
-          {/* If a screen needs the native header, explicitly enable it and set a human title via Stack.Screen options. */}
-          {/* in order for ios apps tab switching to work properly, use presentation: "fullScreenModal" for login page, whenever you decide to use presentation: "modal*/}
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="oauth/callback" />
-          </Stack>
-          <StatusBar style="auto" />
+          <DiaryProvider><ImanoteGate /></DiaryProvider>
         </QueryClientProvider>
       </trpc.Provider>
     </GestureHandlerRootView>

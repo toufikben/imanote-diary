@@ -1,48 +1,11 @@
-import { ScrollView, Text, View, TouchableOpacity } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { EntryCard, formatDiaryDate } from "@/components/imanote/visuals";
+import { useDiary } from "@/lib/imanote/diary-context";
 
-import { ScreenContainer } from "@/components/screen-container";
-
-/**
- * Home Screen - NativeWind Example
- *
- * This template uses NativeWind (Tailwind CSS for React Native).
- * You can use familiar Tailwind classes directly in className props.
- *
- * Key patterns:
- * - Use `className` instead of `style` for most styling
- * - Theme colors: use tokens directly (bg-background, text-foreground, bg-primary, etc.); no dark: prefix needed
- * - Responsive: standard Tailwind breakpoints work on web
- * - Custom colors defined in tailwind.config.js
- */
 export default function HomeScreen() {
-  return (
-    <ScreenContainer className="p-6">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-1 gap-8">
-          {/* Hero Section */}
-          <View className="items-center gap-2">
-            <Text className="text-4xl font-bold text-foreground">Welcome</Text>
-            <Text className="text-base text-muted text-center">
-              Edit app/(tabs)/index.tsx to get started
-            </Text>
-          </View>
-
-          {/* Example Card */}
-          <View className="w-full max-w-sm self-center bg-surface rounded-2xl p-6 shadow-sm border border-border">
-            <Text className="text-lg font-semibold text-foreground mb-2">NativeWind Ready</Text>
-            <Text className="text-sm text-muted leading-relaxed">
-              Use Tailwind CSS classes directly in your React Native components.
-            </Text>
-          </View>
-
-          {/* Example Button */}
-          <View className="items-center">
-            <TouchableOpacity className="bg-primary px-6 py-3 rounded-full active:opacity-80">
-              <Text className="text-background font-semibold">Get Started</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </ScreenContainer>
-  );
+  const { entries, copy, palette, isRTL, settings } = useDiary();
+  return <View style={[s.page, { backgroundColor: palette.background }]}><FlatList data={entries.slice(0, 4)} keyExtractor={(item) => item.id} contentContainerStyle={s.content} ListHeaderComponent={<><View style={[s.header, { flexDirection: isRTL ? "row-reverse" : "row" }]}><View><Text style={[s.date, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{formatDiaryDate(new Date().toISOString(), settings.language)}</Text><Text style={[s.welcome, { color: palette.text, textAlign: isRTL ? "right" : "left" }]}>{copy.welcome}</Text></View><View style={[s.flower, { backgroundColor: palette.primarySoft }]}><MaterialIcons name="local-florist" color={palette.primary} size={24} /></View></View><Pressable onPress={() => router.push("/editor" as any)} style={[s.newCard, { backgroundColor: palette.primary, flexDirection: isRTL ? "row-reverse" : "row" }]}><View style={{ flex: 1 }}><Text style={s.newTitle}>{copy.newMemory}</Text><Text style={s.newCopy}>{copy.startWriting}</Text></View><View style={s.newIcon}><MaterialIcons name="edit" size={22} color={palette.primary} /></View></Pressable><View style={[s.section, { flexDirection: isRTL ? "row-reverse" : "row" }]}><Text style={[s.sectionTitle, { color: palette.text }]}>{copy.recent}</Text><Text style={{ color: palette.muted, fontWeight: "800" }}>{entries.length}</Text></View></>} renderItem={({ item }) => <EntryCard entry={item} onPress={() => router.push(`/entry/${item.id}` as any)} />} ListEmptyComponent={<View style={[s.empty, { borderColor: palette.border, backgroundColor: palette.surface }]}><MaterialIcons name="auto-stories" size={32} color={palette.primary} /><Text style={[s.emptyTitle, { color: palette.text }]}>{copy.noMemories}</Text><Text style={[s.emptyCopy, { color: palette.muted }]}>{copy.startWriting}</Text></View>} /><Pressable onPress={() => router.push("/editor" as any)} style={[s.fab, { backgroundColor: palette.primary }]}><MaterialIcons name="add" color="#fff" size={29} /></Pressable></View>;
 }
+const s = StyleSheet.create({ page: { flex: 1 }, content: { padding: 20, paddingTop: 23, paddingBottom: 115 }, header: { alignItems: "center", justifyContent: "space-between", marginBottom: 22 }, date: { fontSize: 13, fontWeight: "700", marginBottom: 5 }, welcome: { fontSize: 28, fontWeight: "800" }, flower: { width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center" }, newCard: { borderRadius: 24, padding: 19, alignItems: "center", gap: 12, marginBottom: 24 }, newTitle: { color: "#fff", fontSize: 19, fontWeight: "800" }, newCopy: { color: "#FFF3F7", fontSize: 13, marginTop: 5 }, newIcon: { backgroundColor: "#fff", width: 43, height: 43, borderRadius: 22, alignItems: "center", justifyContent: "center" }, section: { alignItems: "center", justifyContent: "space-between", marginBottom: 13 }, sectionTitle: { fontSize: 18, fontWeight: "800" }, empty: { borderWidth: 1, borderRadius: 22, padding: 28, alignItems: "center", gap: 8 }, emptyTitle: { fontSize: 17, fontWeight: "800" }, emptyCopy: { fontSize: 14, textAlign: "center" }, fab: { position: "absolute", right: 22, bottom: 22, width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center", elevation: 4 } });

@@ -1,40 +1,13 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { HapticTab } from "@/components/haptic-tab";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Platform } from "react-native";
-import { useColors } from "@/hooks/use-colors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HapticTab } from "@/components/haptic-tab";
+import { useDiary } from "@/lib/imanote/diary-context";
 
 export default function TabLayout() {
-  const colors = useColors();
+  const { copy, palette } = useDiary();
   const insets = useSafeAreaInsets();
-  const bottomPadding = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 56 + bottomPadding;
-
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarStyle: {
-          paddingTop: 8,
-          paddingBottom: bottomPadding,
-          height: tabBarHeight,
-          backgroundColor: colors.background,
-          borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+  const bottom = Platform.OS === "web" ? 12 : Math.max(insets.bottom, 8);
+  return <Tabs screenOptions={{ headerShown: false, tabBarButton: HapticTab, tabBarActiveTintColor: palette.primary, tabBarInactiveTintColor: palette.muted, tabBarStyle: { backgroundColor: palette.surface, borderTopColor: palette.border, height: 56 + bottom, paddingBottom: bottom, paddingTop: 7 } }}><Tabs.Screen name="index" options={{ title: copy.diary, tabBarIcon: ({ color }) => <MaterialIcons name="menu-book" size={25} color={color} /> }} /><Tabs.Screen name="memories" options={{ title: copy.memories, tabBarIcon: ({ color }) => <MaterialIcons name="format-list-bulleted" size={25} color={color} /> }} /><Tabs.Screen name="settings" options={{ title: copy.settings, tabBarIcon: ({ color }) => <MaterialIcons name="settings" size={24} color={color} /> }} /></Tabs>;
 }

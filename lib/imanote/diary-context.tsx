@@ -1,0 +1,31 @@
+import { useThemeContext } from "@/lib/theme-provider";
+import * as Crypto from "expo-crypto";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Platform } from "react-native";
+import { getCopy } from "./copy";
+import { clearLock, createLock, getLockRecord, loadEntries, loadSettings, persistEntries, persistSettings, removeVoiceMemo, verifyLock } from "./storage";
+import { DEFAULT_SETTINGS, PALETTES, type DiaryEntry, type DiarySettings, type EntryFont, type LockKind } from "./types";
+
+type AccessState = "loading" | "setup" | "locked" | "unlocked";
+type DiaryContextValue = { ready: boolean; accessState: AccessState; settings: DiarySettings; entries: DiaryEntry[]; copy: ReturnType<typeof getCopy>; palette: (typeof PALETTES)[DiarySettings["appearance"]]; isRTL: boolean; updateSettings: (next: Partial<DiarySettings>) => Promise<void>; configureLock: (kind: LockKind, value: string) => Promise<void>; unlock: (value: string) => Promise<boolean>; requestLockChange: () => Promise<void>; saveEntry: (draft: Omit<DiaryEntry, "id" | "createdAt" | "updatedAt"> & { id?: string }) => Promise<DiaryEntry>; deleteEntry: (id: string) => Promise<void>; fontFamily: (font: EntryFont) => string | undefined };
+const DiaryContext = createContext<DiaryContextValue | null>(null);
+
+export function DiaryProvider({ children }: { children: React.ReactNode }) {
+  const { setColorScheme } = useThemeContext();
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [entries, setEntries] = useState<DiaryEntry[]>([]);
+  const [accessState, setAccessState] = useState<AccessState>("loading");
+  const [ready, setReady] = useState(false);
+  useEffect(() => { void (async () => { const [storedSettings, storedEntries, lock] = await Promise.all([loadSettings(), loadEntries(), getLockRecord()]); setSettings(storedSettings); setEntries(storedEntries); setColorScheme(storedSettings.appearance === "noir" ? "dark" : "light"); setAccessState(lock ? "locked" : "setup"); setReady(true); })(); }, [setColorScheme]);
+  const updateSettings = useCallback(async (changes: Partial<DiarySettings>) => { const next = { ...settings, ...changes }; setSettings(next); setColorScheme(next.appearance === "noir" ? "dark" : "light"); await persistSettings(next); }, [setColorScheme, settings]);
+  const configureLock = useCallback(async (kind: LockKind, value: string) => { await createLock(kind, value); setAccessState("unlocked"); }, []);
+  const unlock = useCallback(async (value: string) => { const ok = await verifyLock(value); if (ok) setAccessState("unlocked"); return ok; }, []);
+  const requestLockChange = useCallback(async () => { await clearLock(); setAccessState("setup"); }, []);
+  const saveEntry = useCallback(async (draft: Omit<DiaryEntry, "id" | "createdAt" | "updatedAt"> & { id?: string }) => { const now = new Date().toISOString(); const current = draft.id ? entries.find((entry) => entry.id === draft.id) : undefined; const entry: DiaryEntry = { ...draft, id: draft.id ?? Crypto.randomUUID(), createdAt: current?.createdAt ?? now, updatedAt: now }; const next = [entry, ...entries.filter((item) => item.id !== entry.id)].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)); setEntries(next); await persistEntries(next); return entry; }, [entries]);
+  const deleteEntry = useCallback(async (id: string) => { const removed = entries.find((entry) => entry.id === id); const next = entries.filter((entry) => entry.id !== id); setEntries(next); await persistEntries(next); await removeVoiceMemo(removed?.audioUri); }, [entries]);
+  const fontFamily = useCallback((font: EntryFont) => ({ classic: Platform.select({ ios: "Georgia", android: "serif", default: "serif" }), clean: Platform.select({ ios: "Avenir Next", android: "sans-serif", default: "sans-serif" }), mono: Platform.select({ ios: "Menlo", android: "monospace", default: "monospace" }) }[font]), []);
+  const value = useMemo(() => ({ ready, accessState, settings, entries, copy: getCopy(settings.language), palette: PALETTES[settings.appearance], isRTL: settings.language === "ar", updateSettings, configureLock, unlock, requestLockChange, saveEntry, deleteEntry, fontFamily }), [accessState, configureLock, deleteEntry, entries, fontFamily, ready, requestLockChange, saveEntry, settings, unlock, updateSettings]);
+  return <DiaryContext.Provider value={value}>{children}</DiaryContext.Provider>;
+}
+export function useDiary() { const context = useContext(DiaryContext); if (!context) throw new Error("useDiary must be used within DiaryProvider"); return context; }
+
