@@ -50,3 +50,7 @@
 - [x] Implement permission-aware scheduling, rescheduling, and cancellation of a recurring on-device notification.
 - [x] Add Arabic, French, and English reminder controls to the settings screen.
 - [x] Test reminder preference normalization and the project checks, then save a publish-ready checkpoint.
+- [x] Verify whether the latest GitHub Actions workflow produced an Android APK or AAB artifact.
+- [x] Prepare an automatic GitHub Actions workflow that requests both preview APK and production AAB builds after EXPO_TOKEN is configured.
+- [x] Validate the dual-build workflow configuration locally before requesting GitHub upload approval.
+- [ ] Save a checkpoint containing the validated dual-build workflow before requesting GitHub upload approval.
