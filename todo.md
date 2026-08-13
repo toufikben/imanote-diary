@@ -55,3 +55,6 @@
 - [x] Validate the dual-build workflow configuration locally before requesting GitHub upload approval.
 - [x] Save a checkpoint containing the validated dual-build workflow before requesting GitHub upload approval.
 - [x] Review the locally completed but unpushed changes and obtain approval for their exact upload scope.
+- [x] Repair the missing Expo/EAS project linkage that prevents automated APK and AAB requests.
+- [x] Validate the non-interactive EAS linking configuration before uploading the repair.
+- [ ] Save a checkpoint for the validated EAS-linking repair before requesting upload approval.
