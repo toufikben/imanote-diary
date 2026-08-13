@@ -39,3 +39,8 @@
 - [x] Add sticker selection, removal, and decorated rendering in the editor and memory reader.
 - [x] Test sticker persistence.
 - [x] Save a new publish-ready checkpoint.
+- [x] Rename the approved empty repository to toufikben/imanote-diary.
+- [x] Add a GitHub Actions workflow that validates the mobile app and starts an Android APK build on each main-branch push.
+- [x] Document secure configuration of the EXPO_TOKEN repository secret without storing it in project files.
+- [ ] Upload the current Imanote diary project to the renamed private repository.
+- [ ] Verify the uploaded workflow and explain automatic build status and APK retrieval.
