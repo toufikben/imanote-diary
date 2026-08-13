@@ -57,4 +57,7 @@
 - [x] Review the locally completed but unpushed changes and obtain approval for their exact upload scope.
 - [x] Repair the missing Expo/EAS project linkage that prevents automated APK and AAB requests.
 - [x] Validate the non-interactive EAS linking configuration before uploading the repair.
-- [ ] Save a checkpoint for the validated EAS-linking repair before requesting upload approval.
+- [x] Save a checkpoint for the validated EAS-linking repair before requesting upload approval.
+- [x] Correct the Expo account identifier to the account authorized by the configured EXPO_TOKEN.
+- [x] Validate the corrected EAS account configuration before uploading it.
+- [ ] Save a checkpoint for the corrected Expo account identifier before requesting upload approval.

@@ -100,7 +100,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Initialize or link EAS project
-        run: eas init --account toufikben2-team --non-interactive
+        run: eas init --account toufikben2s-team --non-interactive
 
       - name: Request ${{ matrix.label }} build
         run: eas build --platform android --profile ${{ matrix.profile }} --non-interactive --no-wait

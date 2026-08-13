@@ -7,7 +7,7 @@ Every push to the `main` branch runs type checks and tests. Once the Expo creden
 1. In Expo, create a personal access token for the account that owns the diary project.
 2. In GitHub, open **Settings → Secrets and variables → Actions → New repository secret**.
 3. Create a secret named `EXPO_TOKEN`, paste the Expo token, and save it. Do not put the token in source code, commits, issues, or chat messages.
-4. The workflow links or creates `@toufikben2-team/imanote-diary` on EAS before requesting a build. This prevents the `EAS project not configured` error when GitHub uses the token non-interactively.
+4. The workflow links or creates `@toufikben2s-team/imanote-diary` on EAS before requesting a build. This prevents the `EAS project not configured` error when GitHub uses the token non-interactively.
 5. If Expo asks for Android signing credentials during the first successful request, complete that one-time setup in the Expo build page. Future pushes can then start both Android builds automatically.
 
 ## Using the build
