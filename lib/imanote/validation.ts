@@ -10,7 +10,7 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
   return {
     language: value.language === "ar" || value.language === "fr" || value.language === "en" ? value.language : DEFAULT_SETTINGS.language,
     appearance: value.appearance === "blossom" || value.appearance === "noir" ? value.appearance : DEFAULT_SETTINGS.appearance,
-    defaultFont: value.defaultFont === "classic" || value.defaultFont === "clean" || value.defaultFont === "mono" ? value.defaultFont : DEFAULT_SETTINGS.defaultFont,
+    defaultFont: value.defaultFont === "classic" || value.defaultFont === "clean" || value.defaultFont === "rounded" || value.defaultFont === "mono" ? value.defaultFont : DEFAULT_SETTINGS.defaultFont,
   };
 }
 

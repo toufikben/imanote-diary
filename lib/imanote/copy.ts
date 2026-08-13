@@ -7,5 +7,5 @@ export const COPY = {
 } as const;
 
 export function getCopy(language: AppLanguage) { return COPY[language]; }
-export function fontName(font: EntryFont, language: AppLanguage) { return ({ classic: { ar: "كلاسيكي", fr: "Classique", en: "Classic" }, clean: { ar: "هادئ", fr: "Épuré", en: "Clean" }, mono: { ar: "أحادي", fr: "Mono", en: "Mono" } } as const)[font][language]; }
+export function fontName(font: EntryFont, language: AppLanguage) { return ({ classic: { ar: "كلاسيكي", fr: "Classique", en: "Classic" }, clean: { ar: "هادئ", fr: "Épuré", en: "Clean" }, rounded: { ar: "مستدير", fr: "Arrondi", en: "Rounded" }, mono: { ar: "أحادي", fr: "Mono", en: "Mono" } } as const)[font][language]; }
 export function languageName(language: AppLanguage, displayLanguage: AppLanguage) { return ({ ar: { ar: "العربية", fr: "Arabe", en: "Arabic" }, fr: { ar: "الفرنسية", fr: "Français", en: "French" }, en: { ar: "الإنجليزية", fr: "Anglais", en: "English" } } as const)[language][displayLanguage]; }

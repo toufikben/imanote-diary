@@ -22,3 +22,9 @@
 - [x] Add password-encrypted local backup import with validation and merge/replace confirmation.
 - [x] Test the new image, calendar, and backup behaviors.
 - [x] Create a new publish-ready checkpoint.
+- [x] Refine the feminine floral pink theme with distinct decorative styling.
+- [x] Refine the masculine dark theme with solid, high-contrast visual language.
+- [x] Add more visible in-app typography choices and font previews.
+- [x] Add a small, original wolf accent to an appropriate diary interface page.
+- [x] Validate the refined visual system.
+- [x] Save a new publish-ready checkpoint.

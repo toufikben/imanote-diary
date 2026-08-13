@@ -1,6 +1,6 @@
 export type AppLanguage = "ar" | "fr" | "en";
 export type AppAppearance = "blossom" | "noir";
-export type EntryFont = "classic" | "clean" | "mono";
+export type EntryFont = "classic" | "clean" | "rounded" | "mono";
 export type LockKind = "pin" | "password";
 
 export type PhotoAttachment = { id: string; uri: string; name: string; mimeType: string; width?: number; height?: number };
@@ -22,6 +22,6 @@ export type Palette = { background: string; surface: string; softSurface: string
 
 export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic" };
 export const PALETTES: Record<AppAppearance, Palette> = {
-  blossom: { background: "#FFF7FA", surface: "#FFFFFF", softSurface: "#FFF0F5", text: "#3A2430", muted: "#8D6B79", primary: "#C65B7C", primarySoft: "#F7D7E1", border: "#F0D8E1", danger: "#B4435D", flower: "#E989A7", leaf: "#8CAD85" },
-  noir: { background: "#111318", surface: "#1B1F27", softSurface: "#232935", text: "#F2F0EC", muted: "#A8AFBA", primary: "#C59A6D", primarySoft: "#3A3029", border: "#303846", danger: "#E08A8A", flower: "#C59A6D", leaf: "#758A73" },
+  blossom: { background: "#FFF5FA", surface: "#FFFDFE", softSurface: "#FFF0F5", text: "#3B2631", muted: "#8D6575", primary: "#C24F78", primarySoft: "#FBE0EA", border: "#F0C9D8", danger: "#B4435D", flower: "#DE6C99", leaf: "#85A875" },
+  noir: { background: "#0C1017", surface: "#161C26", softSurface: "#1D2633", text: "#F5F2EC", muted: "#A7B0C0", primary: "#D0A676", primarySoft: "#342A23", border: "#2D3A4C", danger: "#E08A8A", flower: "#D0A676", leaf: "#687E70" },
 };
