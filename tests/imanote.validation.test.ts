@@ -15,8 +15,8 @@ describe("Imanote privacy validation", () => {
 
 describe("Imanote local data normalization", () => {
   it("repairs malformed local settings with safe defaults", () => {
-    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono" })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono" });
-    expect(normalizeSettings({ language: "bad", appearance: "bright" })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic" });
+    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono" })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain" });
+    expect(normalizeSettings({ language: "bad", appearance: "bright" })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain" });
   });
   it("orders local memories by latest modification without mutating the source", () => {
     const source = [
@@ -40,7 +40,7 @@ describe("Imanote encrypted local backups", () => {
   const payload = {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
-    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const },
+    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const },
     entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };

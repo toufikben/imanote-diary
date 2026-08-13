@@ -28,3 +28,9 @@
 - [x] Add a small, original wolf accent to an appropriate diary interface page.
 - [x] Validate the refined visual system.
 - [x] Save a new publish-ready checkpoint.
+- [x] Add local default and per-memory font-size controls.
+- [x] Add local default and per-memory line-spacing controls.
+- [x] Add varied paper-style diary backgrounds with a clear selector.
+- [x] Apply typography and paper choices consistently in editing and reading interfaces.
+- [x] Test the typography and paper-background experience.
+- [x] Save a new publish-ready checkpoint.

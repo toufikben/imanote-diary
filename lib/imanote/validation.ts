@@ -11,6 +11,9 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
     language: value.language === "ar" || value.language === "fr" || value.language === "en" ? value.language : DEFAULT_SETTINGS.language,
     appearance: value.appearance === "blossom" || value.appearance === "noir" ? value.appearance : DEFAULT_SETTINGS.appearance,
     defaultFont: value.defaultFont === "classic" || value.defaultFont === "clean" || value.defaultFont === "rounded" || value.defaultFont === "mono" ? value.defaultFont : DEFAULT_SETTINGS.defaultFont,
+    defaultFontSize: value.defaultFontSize === "small" || value.defaultFontSize === "medium" || value.defaultFontSize === "large" ? value.defaultFontSize : DEFAULT_SETTINGS.defaultFontSize,
+    defaultLineSpacing: value.defaultLineSpacing === "tight" || value.defaultLineSpacing === "normal" || value.defaultLineSpacing === "relaxed" ? value.defaultLineSpacing : DEFAULT_SETTINGS.defaultLineSpacing,
+    defaultPaper: value.defaultPaper === "plain" || value.defaultPaper === "ruled" || value.defaultPaper === "dots" || value.defaultPaper === "blossom" || value.defaultPaper === "night" ? value.defaultPaper : DEFAULT_SETTINGS.defaultPaper,
   };
 }
 
