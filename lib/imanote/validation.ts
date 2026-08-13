@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type DiaryEntry, type DiarySettings, type LockKind } from "./types";
+import { DEFAULT_SETTINGS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntrySticker, type LockKind } from "./types";
 
 export function isValidLockValue(kind: LockKind, value: string) {
   return kind === "pin" ? /^\d{4}$/.test(value) : value.trim().length >= 4;
@@ -19,4 +19,10 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
 
 export function sortEntries(entries: DiaryEntry[]) {
   return [...entries].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+/** Removes malformed or duplicated externally restored sticker ids and caps the small decoration row. */
+export function normalizeStickers(candidate: unknown): EntrySticker[] {
+  if (!Array.isArray(candidate)) return [];
+  return Array.from(new Set(candidate.filter((sticker): sticker is EntrySticker => typeof sticker === "string" && STICKER_IDS.includes(sticker as EntrySticker)))).slice(0, 3);
 }

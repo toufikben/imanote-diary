@@ -34,3 +34,8 @@
 - [x] Apply typography and paper choices consistently in editing and reading interfaces.
 - [x] Test the typography and paper-background experience.
 - [x] Save a new publish-ready checkpoint.
+- [x] Define a small curated sticker library appropriate to both diary themes.
+- [x] Persist selected stickers locally with each diary memory and validate stored sticker identifiers.
+- [x] Add sticker selection, removal, and decorated rendering in the editor and memory reader.
+- [x] Test sticker persistence.
+- [x] Save a new publish-ready checkpoint.

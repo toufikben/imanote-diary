@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
 import { getCopy } from "../lib/imanote/copy";
-import { normalizeSettings, isValidLockValue, sortEntries } from "../lib/imanote/validation";
+import { normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
 describe("Imanote privacy validation", () => {
   it("accepts only a four-digit PIN and a non-trivial password", () => {
@@ -25,6 +25,10 @@ describe("Imanote local data normalization", () => {
     ];
     expect(sortEntries(source).map((entry) => entry.id)).toEqual(["newer", "older"]);
     expect(source.map((entry) => entry.id)).toEqual(["older", "newer"]);
+  });
+  it("keeps at most three unique safe sticker identifiers", () => {
+    expect(normalizeStickers(["flower", "flower", "wolfMoon", "bad", "heart", "star"])).toEqual(["flower", "wolfMoon", "heart"]);
+    expect(normalizeStickers("flower")).toEqual([]);
   });
 });
 

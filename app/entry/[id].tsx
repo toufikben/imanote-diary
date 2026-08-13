@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { PaperSheet, paperTone, textMetrics } from "@/components/imanote/paper-sheet";
+import { StickerRow } from "@/components/imanote/sticker-strip";
 import { AudioPlayback, formatDiaryDate } from "@/components/imanote/visuals";
 import { useDiary } from "@/lib/imanote/diary-context";
 
@@ -18,6 +19,7 @@ export default function EntryDetail() {
     <ScrollView contentContainerStyle={s.content}>
       <PaperSheet paper={entry.paper} contentStyle={s.paperContent}>
         <Text style={[s.date, { color: entry.paper === "night" ? "#C6BCAE" : palette.muted, textAlign: isRTL ? "right" : "left" }]}>{formatDiaryDate(entry.updatedAt, settings.language)}</Text>
+        <StickerRow stickers={entry.stickers} palette={palette} isRTL={isRTL} />
         <Text style={[s.title, { color: tone.text, textAlign: isRTL ? "right" : "left", fontFamily: fontFamily(entry.font), ...textMetrics(entry.fontSize, entry.lineSpacing, 28) }]}>{entry.title || "—"}</Text>
         {entry.attachments?.length ? <View style={s.images}><Text style={[s.imageLabel, { color: entry.paper === "night" ? "#C6BCAE" : palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.photos}</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[s.imageRow, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{entry.attachments.map((attachment) => <Image key={attachment.id} source={{ uri: attachment.uri }} style={[s.image, { borderColor: entry.paper === "night" ? "#554B3D" : palette.border }]} />)}</ScrollView></View> : null}
         {entry.audioUri && <AudioPlayback uri={entry.audioUri} durationMs={entry.audioDurationMs} />}
