@@ -93,6 +93,12 @@ const config: ExpoConfig = {
       },
     ],
     [
+      "expo-notifications",
+      {
+        defaultChannel: "private-diary-reminders",
+      },
+    ],
+    [
       "expo-video",
       {
         supportsBackgroundPlayback: true,

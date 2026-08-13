@@ -14,6 +14,9 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
     defaultFontSize: value.defaultFontSize === "small" || value.defaultFontSize === "medium" || value.defaultFontSize === "large" ? value.defaultFontSize : DEFAULT_SETTINGS.defaultFontSize,
     defaultLineSpacing: value.defaultLineSpacing === "tight" || value.defaultLineSpacing === "normal" || value.defaultLineSpacing === "relaxed" ? value.defaultLineSpacing : DEFAULT_SETTINGS.defaultLineSpacing,
     defaultPaper: value.defaultPaper === "plain" || value.defaultPaper === "ruled" || value.defaultPaper === "dots" || value.defaultPaper === "blossom" || value.defaultPaper === "night" ? value.defaultPaper : DEFAULT_SETTINGS.defaultPaper,
+    dailyReminderEnabled: typeof value.dailyReminderEnabled === "boolean" ? value.dailyReminderEnabled : DEFAULT_SETTINGS.dailyReminderEnabled,
+    dailyReminderHour: Number.isInteger(value.dailyReminderHour) && (value.dailyReminderHour as number) >= 0 && (value.dailyReminderHour as number) <= 23 ? value.dailyReminderHour as number : DEFAULT_SETTINGS.dailyReminderHour,
+    dailyReminderMinute: Number.isInteger(value.dailyReminderMinute) && (value.dailyReminderMinute as number) >= 0 && (value.dailyReminderMinute as number) <= 59 ? value.dailyReminderMinute as number : DEFAULT_SETTINGS.dailyReminderMinute,
   };
 }
 

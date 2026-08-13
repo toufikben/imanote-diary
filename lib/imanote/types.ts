@@ -24,11 +24,11 @@ export type DiaryEntry = {
   attachments?: PhotoAttachment[];
 };
 
-export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle };
+export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle; dailyReminderEnabled: boolean; dailyReminderHour: number; dailyReminderMinute: number };
 export type LockRecord = { kind: LockKind; salt: string; verifier: string };
 export type Palette = { background: string; surface: string; softSurface: string; text: string; muted: string; primary: string; primarySoft: string; border: string; danger: string; flower: string; leaf: string };
 
-export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain" };
+export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0 };
 export const STICKER_IDS: EntrySticker[] = ["flower", "heart", "star", "coffee", "moon", "leaf", "wolfMoon"];
 export const PALETTES: Record<AppAppearance, Palette> = {
   blossom: { background: "#FFF5FA", surface: "#FFFDFE", softSurface: "#FFF0F5", text: "#3B2631", muted: "#8D6575", primary: "#C24F78", primarySoft: "#FBE0EA", border: "#F0C9D8", danger: "#B4435D", flower: "#DE6C99", leaf: "#85A875" },
