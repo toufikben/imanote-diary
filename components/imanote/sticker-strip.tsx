@@ -4,7 +4,7 @@ import { stickerName } from "@/lib/imanote/copy";
 
 const STICKERS: { id: EntrySticker; glyph: string }[] = [
   { id: "flower", glyph: "🌸" }, { id: "heart", glyph: "💗" }, { id: "star", glyph: "⭐" },
-  { id: "coffee", glyph: "☕" }, { id: "moon", glyph: "🌙" }, { id: "leaf", glyph: "🍃" }, { id: "wolfMoon", glyph: "🌙🐺" },
+  { id: "coffee", glyph: "☕" }, { id: "moon", glyph: "🌙" }, { id: "leaf", glyph: "🍃" }, { id: "wolf", glyph: "🐺" }, { id: "wolfMoon", glyph: "🌙🐺" },
 ];
 
 export function StickerPicker({ selected, onChange, palette, language, isRTL }: { selected: EntrySticker[]; onChange: (next: EntrySticker[]) => void; palette: Palette; language: AppLanguage; isRTL: boolean }) {

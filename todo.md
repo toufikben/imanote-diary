@@ -67,3 +67,7 @@
 - [x] Keep the PIN lock-screen title as “Private Diary” in Arabic, French, and English.
 - [x] Verify the fixed PIN-screen title with TypeScript and change-scope checks.
 - [x] Save a checkpoint and upload the approved fixed-title change to GitHub.
+- [x] Change the PIN and password lock-screen title to Imanote in all languages.
+- [x] Add an original wolf option to the diary sticker library while retaining the existing wolf accent.
+- [x] Test the Imanote lock-screen title and wolf sticker with TypeScript and regression checks.
+- [ ] Save a checkpoint for the tested Imanote title and wolf sticker before requesting upload approval.

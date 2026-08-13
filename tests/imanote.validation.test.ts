@@ -27,7 +27,7 @@ describe("Imanote local data normalization", () => {
     expect(source.map((entry) => entry.id)).toEqual(["older", "newer"]);
   });
   it("keeps at most three unique safe sticker identifiers", () => {
-    expect(normalizeStickers(["flower", "flower", "wolfMoon", "bad", "heart", "star"])).toEqual(["flower", "wolfMoon", "heart"]);
+    expect(normalizeStickers(["flower", "flower", "wolf", "bad", "wolfMoon", "heart"])).toEqual(["flower", "wolf", "wolfMoon"]);
     expect(normalizeStickers("flower")).toEqual([]);
   });
 });
