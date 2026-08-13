@@ -46,3 +46,7 @@
 - [x] Verify the uploaded workflow and explain automatic build status and APK retrieval.
 - [x] Correct the GitHub Actions secret condition that prevented the first workflow run from creating jobs.
 - [x] Remove the pnpm-version conflict that blocked GitHub Actions dependency setup.
+- [x] Add persisted daily-reminder preferences and safe normalization for existing local settings and backups.
+- [x] Implement permission-aware scheduling, rescheduling, and cancellation of a recurring on-device notification.
+- [x] Add Arabic, French, and English reminder controls to the settings screen.
+- [x] Test reminder preference normalization and the project checks, then save a publish-ready checkpoint.
