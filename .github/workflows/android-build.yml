@@ -41,31 +41,43 @@ jobs:
   build-android:
     name: Request Android APK from Expo
     needs: validate
-    if: ${{ secrets.EXPO_TOKEN != '' }}
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
+      - name: Explain skipped APK request when Expo credential is unavailable
+        if: ${{ env.EXPO_TOKEN == '' }}
+        run: |
+          echo "::warning::EXPO_TOKEN is not configured. Validation completed, but no APK request was sent. Add the EXPO_TOKEN repository secret and push again."
+
       - name: Check out source
+        if: ${{ env.EXPO_TOKEN != '' }}
         uses: actions/checkout@v5
 
       - name: Set up pnpm
+        if: ${{ env.EXPO_TOKEN != '' }}
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
       - name: Set up Node.js
+        if: ${{ env.EXPO_TOKEN != '' }}
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
 
       - name: Set up Expo and EAS
+        if: ${{ env.EXPO_TOKEN != '' }}
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install dependencies
+        if: ${{ env.EXPO_TOKEN != '' }}
         run: pnpm install --frozen-lockfile
 
       - name: Request preview APK build
+        if: ${{ env.EXPO_TOKEN != '' }}
         run: eas build --platform android --profile preview --non-interactive --no-wait
