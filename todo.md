@@ -43,6 +43,6 @@
 - [x] Add a GitHub Actions workflow that validates the mobile app and starts an Android APK build on each main-branch push.
 - [x] Document secure configuration of the EXPO_TOKEN repository secret without storing it in project files.
 - [x] Upload the current Imanote diary project to the renamed private repository.
-- [ ] Verify the uploaded workflow and explain automatic build status and APK retrieval.
+- [x] Verify the uploaded workflow and explain automatic build status and APK retrieval.
 - [x] Correct the GitHub Actions secret condition that prevented the first workflow run from creating jobs.
 - [x] Remove the pnpm-version conflict that blocked GitHub Actions dependency setup.
