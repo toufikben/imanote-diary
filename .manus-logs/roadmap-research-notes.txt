@@ -1,0 +1,21 @@
+External product research, 2026-08-13
+
+Source: Google Play, Daylio Journal - Mood Tracker
+URL: https://play.google.com/store/apps/details?id=net.daylio&hl=en_US
+
+Relevant positioning claims shown on the store page:
+- A private journal with data stored locally on the device.
+- No advertising, tracking, or third-party interference claimed.
+- Optional encrypted backup.
+
+Use as market context only: Imanote can differentiate through transparent local-first privacy, encrypted portable backups, Arabic/French/English RTL quality, and expressive diary composition. Do not copy product assets or claims without independent verification.
+
+Additional sources, 2026-08-13
+
+Source: Apple App Store, Day One: Daily Journal & Diary
+URL: https://apps.apple.com/us/app/day-one-daily-journal-diary/id1044867788
+Relevant publicly listed patterns: prompts and templates reduce blank-page friction; calendar/streaks help routine; tags and filters support reminiscence; secure export makes entries portable; multiple journals offer context separation.
+
+Source: Google Play, Diarium
+URL: https://play.google.com/store/apps/details?id=partl.Diarium&hl=en_US
+Relevant publicly listed patterns: rich entry metadata, mood and tracker tags, handwriting/drawing, imports/exports, optional personal-cloud sync without a proprietary account, and widgets. Evaluate each only when it preserves Imanote's local-first privacy model.
