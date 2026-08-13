@@ -70,4 +70,7 @@
 - [x] Change the PIN and password lock-screen title to Imanote in all languages.
 - [x] Add an original wolf option to the diary sticker library while retaining the existing wolf accent.
 - [x] Test the Imanote lock-screen title and wolf sticker with TypeScript and regression checks.
-- [ ] Save a checkpoint for the tested Imanote title and wolf sticker before requesting upload approval.
+- [x] Save a checkpoint for the tested Imanote title and wolf sticker before requesting upload approval.
+- [x] Add a small playful wolf that peeks from behind the PIN/password entry area without exposing entered characters.
+- [x] Add subtle input-driven wolf motion while preserving accessible, stable lock-screen controls.
+- [x] Test the animated lock-screen wolf and save a checkpoint before requesting upload approval.

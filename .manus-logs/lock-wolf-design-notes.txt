@@ -1,0 +1,4 @@
+PrivacyGate uses a four-dot PIN row and secure TextInput fields for password mode.
+The Imanote title is already rendered directly in components/imanote/visuals.tsx.
+The animated wolf must be decorative and pointer-events disabled, and should animate only from entered-character count rather than actual PIN/password values.
+The existing WolfMark SVG can be reused as a small peeking character behind the PIN dots and password input area.

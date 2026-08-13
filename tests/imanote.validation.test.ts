@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
 import { getCopy } from "../lib/imanote/copy";
+import { getLockWolfPeekProgress } from "../lib/imanote/lock-wolf";
 import { normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
 describe("Imanote privacy validation", () => {
@@ -10,6 +11,13 @@ describe("Imanote privacy validation", () => {
     expect(isValidLockValue("pin", "abcd")).toBe(false);
     expect(isValidLockValue("password", "rose")).toBe(true);
     expect(isValidLockValue("password", "no")).toBe(false);
+  });
+  it("drives the decorative lock wolf from character count only", () => {
+    expect(getLockWolfPeekProgress(0)).toBe(0);
+    expect(getLockWolfPeekProgress(1)).toBe(0.63);
+    expect(getLockWolfPeekProgress(4)).toBeGreaterThan(getLockWolfPeekProgress(1));
+    expect(getLockWolfPeekProgress(99)).toBe(1);
+    expect(getLockWolfPeekProgress(-2)).toBe(0);
   });
 });
 
