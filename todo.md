@@ -85,4 +85,4 @@
 - [x] Test the mood-tag feature and save a checkpoint before requesting GitHub upload approval.
 - [x] Move the editor save action lower in the screen while retaining safe touch spacing from the bottom edge.
 - [x] Verify the adjusted save action layout and save a checkpoint before requesting GitHub upload approval.
-- [ ] Prepare a prioritized, privacy-first roadmap of potential Imanote improvements without implementing unapproved features.
+- [x] Prepare a prioritized, privacy-first roadmap of potential Imanote improvements without implementing unapproved features.
