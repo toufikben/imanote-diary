@@ -45,3 +45,4 @@
 - [x] Upload the current Imanote diary project to the renamed private repository.
 - [ ] Verify the uploaded workflow and explain automatic build status and APK retrieval.
 - [x] Correct the GitHub Actions secret condition that prevented the first workflow run from creating jobs.
+- [x] Remove the pnpm-version conflict that blocked GitHub Actions dependency setup.
