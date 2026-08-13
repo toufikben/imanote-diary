@@ -74,3 +74,7 @@
 - [x] Add a small playful wolf that peeks from behind the PIN/password entry area without exposing entered characters.
 - [x] Add subtle input-driven wolf motion while preserving accessible, stable lock-screen controls.
 - [x] Test the animated lock-screen wolf and save a checkpoint before requesting upload approval.
+- [ ] Verify the latest GitHub Actions run and report the availability of the APK and AAB builds.
+- [x] Upload the approved Imanote lock title, wolf sticker, and count-only animated lock-screen wolf to GitHub.
+- [x] Verify the automated Android validation and build requests started from the uploaded improvements.
+- [x] Reconcile the diverged GitHub main history with the approved local improvements before upload.
