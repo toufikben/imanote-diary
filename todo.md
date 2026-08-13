@@ -60,4 +60,7 @@
 - [x] Save a checkpoint for the validated EAS-linking repair before requesting upload approval.
 - [x] Correct the Expo account identifier to the account authorized by the configured EXPO_TOKEN.
 - [x] Validate the corrected EAS account configuration before uploading it.
-- [ ] Save a checkpoint for the corrected Expo account identifier before requesting upload approval.
+- [x] Save a checkpoint for the corrected Expo account identifier before requesting upload approval.
+- [x] Add the EAS project ID generated for the dynamic Expo configuration so automated builds can proceed.
+- [x] Validate the EAS project-ID configuration before uploading it.
+- [ ] Save a checkpoint for the validated EAS project-ID configuration before requesting upload approval.
