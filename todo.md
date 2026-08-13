@@ -63,4 +63,7 @@
 - [x] Save a checkpoint for the corrected Expo account identifier before requesting upload approval.
 - [x] Add the EAS project ID generated for the dynamic Expo configuration so automated builds can proceed.
 - [x] Validate the EAS project-ID configuration before uploading it.
-- [ ] Save a checkpoint for the validated EAS project-ID configuration before requesting upload approval.
+- [x] Save a checkpoint for the validated EAS project-ID configuration before requesting upload approval.
+- [x] Keep the PIN lock-screen title as “Private Diary” in Arabic, French, and English.
+- [x] Verify the fixed PIN-screen title with TypeScript and change-scope checks.
+- [ ] Save a checkpoint and upload the approved fixed-title change to GitHub.
