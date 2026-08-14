@@ -150,6 +150,7 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
   const reactionScale = reaction.interpolate({ inputRange: [0, 1], outputRange: [1, outcome === "failure" ? 0.94 : 1.04] });
   const eyeGlowOpacity = reaction.interpolate({ inputRange: [0, 0.18, 0.72, 1], outputRange: [0, 0.95, 0.7, 0] });
   const eyeGlowScale = reaction.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0.7, 1.18, 0.8] });
+  const sadEarTilt = reaction.interpolate({ inputRange: [0, 0.44, 0.72, 1], outputRange: ["0deg", "11deg", "6deg", "0deg"] });
 
   return (
     <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={s.walkWolfStage}>
@@ -163,6 +164,15 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
           <Animated.View style={[s.wolfEyeGlow, { opacity: eyeGlowOpacity, transform: [{ scale: eyeGlowScale }] }]}> 
             <View style={s.wolfEyeGlowDot} />
             <View style={[s.wolfEyeGlowDot, s.wolfEyeGlowDotRight]} />
+          </Animated.View>
+        )}
+        {outcome === "failure" && (
+          <Animated.View style={[s.wolfSadEars, { transform: [{ rotate: sadEarTilt }] }]}> 
+            <Svg width={58} height={30} viewBox="0 0 58 30">
+              <Path d="M8 25 14 3l12 18-9-3Z" fill="#6C5B55" opacity={0.92} />
+              <Path d="m32 21 12-18 6 22-9-7Z" fill="#6C5B55" opacity={0.92} />
+              <Path d="m14 19 2-8 5 9m18 0 5-9 2 8" stroke="#B89A88" strokeWidth={2} strokeLinecap="round" opacity={0.86} />
+            </Svg>
           </Animated.View>
         )}
       </Animated.View>
@@ -350,6 +360,7 @@ const s = StyleSheet.create({
   wolfEyeGlow: { position: "absolute", left: 17, top: 17, width: 26, height: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   wolfEyeGlowDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#F7D56A", shadowColor: "#F4B942", shadowOpacity: 0.95, shadowRadius: 7, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   wolfEyeGlowDotRight: { marginLeft: 1 },
+  wolfSadEars: { position: "absolute", left: 0, top: 0, width: 58, height: 30, alignItems: "center", justifyContent: "flex-start" },
   dots: { flexDirection: "row", justifyContent: "center", gap: 14, marginTop: 28, zIndex: 1 },
   dot: { width: 13, height: 13, borderRadius: 7 },
   keypad: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 10 },
