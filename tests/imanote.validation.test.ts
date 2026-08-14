@@ -63,7 +63,7 @@ describe("Imanote encrypted local backups", () => {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
     settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0 },
-    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
+    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, favorite: true, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };
   it("round-trips a valid backup only with its password", () => {
@@ -77,6 +77,10 @@ describe("Imanote encrypted local backups", () => {
   });
   it("rejects a backup entry with an unsupported mood tag", () => {
     const malformed = { ...payload, entries: [{ ...payload.entries[0], mood: "unknown" }] };
+    expect(() => validateBackupPayload(malformed)).toThrow();
+  });
+  it("rejects a backup entry with an invalid favorite flag", () => {
+    const malformed = { ...payload, entries: [{ ...payload.entries[0], favorite: "yes" }] };
     expect(() => validateBackupPayload(malformed)).toThrow();
   });
 });

@@ -21,6 +21,7 @@ export type DiaryEntry = {
   paper?: PaperStyle;
   stickers?: EntrySticker[];
   mood?: EntryMood;
+  favorite?: boolean;
   audioUri?: string;
   audioDurationMs?: number;
   attachments?: PhotoAttachment[];

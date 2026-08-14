@@ -236,6 +236,7 @@ export function EntryCard({ entry, onPress }: { entry: DiaryEntry; onPress: () =
           <View style={[s.cardMeta, { flexDirection: isRTL ? "row-reverse" : "row" }]}>
             <Text style={[s.cardDate, { color: palette.muted }]}>{formatDiaryDate(entry.updatedAt, settings.language)}</Text>
             <MoodBadge mood={entry.mood} palette={palette} language={settings.language} isRTL={isRTL} />
+            {entry.favorite && <MaterialIcons name="star" color={palette.primary} size={16} />}
             {entry.audioUri && <MaterialIcons name="mic-none" color={palette.primary} size={15} />}
             {entry.attachments?.length ? <MaterialIcons name="photo" color={palette.primary} size={15} /> : null}
           </View>

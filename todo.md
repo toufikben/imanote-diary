@@ -88,7 +88,7 @@
 - [x] Prepare a prioritized, privacy-first roadmap of potential Imanote improvements without implementing unapproved features.
 - [x] Research and prepare a numbered, comprehensive innovation catalogue for Imanote without implementing unapproved features.
 - [x] Replace the hiding lock-screen wolf with a small rotating, walking wolf beside the PIN and password controls.
-- [ ] Implement local discovery features: full-screen photo viewing, favourites, search, filters, and memory resurfacing.
+- [x] Implement local discovery features: full-screen photo viewing, favourites, search, filters, and memory resurfacing.
 - [ ] Implement local writing and creative features: prompts, templates, drafts, folders, handwriting/drawing, and visual customisation.
 - [ ] Implement local reflection features: intensity and energy choices, gratitude, weekly/monthly private summaries, and gentle routines.
 - [ ] Implement local privacy and reliability features: biometric unlock, configurable auto-lock, discreet app switching, readable export, and backup integrity checks.
