@@ -129,8 +129,9 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
           Animated.timing(reaction, { toValue: 0, duration: 430, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
         ])
       : Animated.sequence([
-          Animated.timing(reaction, { toValue: 1, duration: 160, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.timing(reaction, { toValue: 0, duration: 360, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+          Animated.timing(reaction, { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.delay(70),
+          Animated.timing(reaction, { toValue: 0, duration: 455, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
         ]);
     animation.start();
     return () => animation.stop();

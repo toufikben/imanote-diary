@@ -110,3 +110,4 @@
 - [x] Add a brief wolf-howl animation after a successful complete unlock and a gentle sad animation after a rejected complete attempt, with no partial-PIN response.
 - [x] Add a subtle, short-lived eye glow only during the successful wolf-howl animation after a complete accepted unlock.
 - [x] Add a brief drooping-and-trembling ear motion only after a complete rejected PIN or password attempt, with no partial-PIN response.
+- [x] Slow the rejected-attempt ear motion slightly for a more natural, restrained sad reaction.
