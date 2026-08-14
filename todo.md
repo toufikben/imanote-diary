@@ -101,3 +101,7 @@
 - [x] Add on-device privacy and reliability controls: biometric unlock, configurable auto-lock, discreet reminder content, and confirmed secure local wipe.
 - [x] Verify the completed local feature batches and save a recovery checkpoint.
 - [ ] Upload all approved local feature batches to GitHub main, excluding sensitive/external features, and verify the resulting Android build requests.
+- [x] Fix the editor voice-record control so it remains visible and reachable above bottom safe-area and tab-bar space.
+- [x] Prepare an Android Google Play submission package with listing copy, privacy/data-safety notes, release checklist, and asset requirements without adding sensitive or external features.
+- [x] Configure EAS production build-version management so each Android App Bundle can receive a non-duplicate version code for Play testing or release.
+- [ ] Verify the recording-control fix, save a recovery checkpoint, and upload the approved local-only release preparation to GitHub main.
