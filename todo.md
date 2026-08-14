@@ -115,3 +115,11 @@
 - [x] Audit and repair the GitHub Actions workflow so each push to main validates the project and requests both preview APK and production AAB builds.
 - [x] Correct the GitHub Actions Vitest argument separator so the validation job runs with the intended single-fork settings before Android build requests.
 - [x] Verify the permission/build audit, save a recovery checkpoint, and upload all approved local updates to GitHub main.
+- [x] Confirm the latest production AAB build status and provide the Google Play release handoff steps without submitting to the store.
+- [x] Verify Google Play Console developer-account readiness and access for Private Diary.
+- [x] Create the Google Play Console application record for Private Diary with the confirmed name, package identifier, language, and free pricing.
+- [ ] Prepare the Play Console store listing and mandatory app-information declarations.
+- [x] Create a public privacy-policy page and in-app link for the Private Diary Google Play listing; public availability awaits owner publication.
+- [ ] Publish or obtain the public privacy-policy URL required by Google Play Console.
+- [ ] Obtain explicit confirmation of the target release track before uploading the production AAB.
+- [ ] Upload the approved AAB and configure the approved Google Play release track.

@@ -1,6 +1,6 @@
 import "@/global.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -30,11 +30,13 @@ SplashScreen.preventAutoHideAsync().catch(() => undefined);
 function ImanoteGate() {
   const { ready, accessState } = useDiary();
   const [intro, setIntro] = useState(true);
+  const pathname = usePathname();
   useEffect(() => { if (ready) void SplashScreen.hideAsync(); }, [ready]);
+  if (pathname === "/privacy-policy") return <><Stack screenOptions={{ headerShown: false }}><Stack.Screen name="privacy-policy" /></Stack><StatusBar style="auto" /></>;
   if (!ready) return <View style={{ flex: 1, backgroundColor: "#C7D1F0", alignItems: "center", justifyContent: "center" }}><ActivityIndicator color="#C65B7C" /></View>;
   if (intro) return <FloralSplash onFinish={() => setIntro(false)} />;
   if (accessState !== "unlocked") return <PrivacyGate />;
-  return <><Stack screenOptions={{ headerShown: false }}><Stack.Screen name="(tabs)" /><Stack.Screen name="editor" options={{ presentation: "modal" }} /><Stack.Screen name="entry/[id]" /><Stack.Screen name="oauth/callback" /></Stack><StatusBar style="auto" /></>;
+  return <><Stack screenOptions={{ headerShown: false }}><Stack.Screen name="(tabs)" /><Stack.Screen name="editor" options={{ presentation: "modal" }} /><Stack.Screen name="entry/[id]" /><Stack.Screen name="oauth/callback" /><Stack.Screen name="privacy-policy" /></Stack><StatusBar style="auto" /></>;
 }
 
 export const unstable_settings = {
