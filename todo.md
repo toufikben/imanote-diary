@@ -120,6 +120,9 @@
 - [x] Create the Google Play Console application record for Private Diary with the confirmed name, package identifier, language, and free pricing.
 - [ ] Prepare the Play Console store listing and mandatory app-information declarations.
 - [x] Create a public privacy-policy page and in-app link for the Private Diary Google Play listing; public availability awaits owner publication.
-- [ ] Publish or obtain the public privacy-policy URL required by Google Play Console.
+- [x] Publish and verify the public privacy-policy URL required by Google Play Console.
+- [x] Add the confirmed public support email to the Google Play store listing contact details.
+- [x] Research and document privacy-aligned monetization options before adding ads, payments, or external SDKs.
+- [ ] Confirm the first monetization model before adding ads, billing, payments, or external SDKs.
 - [ ] Obtain explicit confirmation of the target release track before uploading the production AAB.
 - [ ] Upload the approved AAB and configure the approved Google Play release track.
