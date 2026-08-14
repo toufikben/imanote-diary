@@ -38,7 +38,7 @@ jobs:
         run: pnpm check
 
       - name: Run tests
-        run: pnpm test --pool=forks --poolOptions.forks.singleFork=true
+        run: pnpm test -- --pool=forks --poolOptions.forks.singleFork=true
 
   check-expo-token:
     name: Check Expo build credential

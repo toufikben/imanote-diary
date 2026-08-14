@@ -113,4 +113,5 @@
 - [x] Slow the rejected-attempt ear motion slightly for a more natural, restrained sad reaction.
 - [x] Audit Android permissions, Expo plugins, and permission texts against implemented microphone, photo, notification, and biometric features; remove any unnecessary permissions.
 - [x] Audit and repair the GitHub Actions workflow so each push to main validates the project and requests both preview APK and production AAB builds.
+- [x] Correct the GitHub Actions Vitest argument separator so the validation job runs with the intended single-fork settings before Android build requests.
 - [ ] Verify the permission/build audit, save a recovery checkpoint, and upload all approved local updates to GitHub main.
