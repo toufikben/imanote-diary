@@ -98,8 +98,11 @@ export function FloralSplash({ onFinish }: { onFinish: () => void }) {
   );
 }
 
-function WalkingLockWolf({ color, isRTL }: { color: string; isRTL: boolean }) {
+type LockOutcome = "success" | "failure" | null;
+
+function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string; isRTL: boolean; outcome: LockOutcome; outcomeKey: number }) {
   const journey = useRef(new Animated.Value(0)).current;
+  const reaction = useRef(new Animated.Value(0)).current;
   const [artUnavailable, setArtUnavailable] = useState(false);
 
   useEffect(() => {
@@ -115,6 +118,24 @@ function WalkingLockWolf({ color, isRTL }: { color: string; isRTL: boolean }) {
     return () => animation.stop();
   }, [journey]);
 
+  useEffect(() => {
+    reaction.stopAnimation();
+    reaction.setValue(0);
+    if (!outcome) return;
+    const animation = outcome === "success"
+      ? Animated.sequence([
+          Animated.timing(reaction, { toValue: 1, duration: 210, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.delay(100),
+          Animated.timing(reaction, { toValue: 0, duration: 430, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        ])
+      : Animated.sequence([
+          Animated.timing(reaction, { toValue: 1, duration: 160, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(reaction, { toValue: 0, duration: 360, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+        ]);
+    animation.start();
+    return () => animation.stop();
+  }, [outcome, outcomeKey, reaction]);
+
   const translateX = journey.interpolate({
     inputRange: [0, 0.5, 1],
     outputRange: isRTL ? [24, -3, -25] : [-24, 3, 25],
@@ -124,10 +145,13 @@ function WalkingLockWolf({ color, isRTL }: { color: string; isRTL: boolean }) {
     inputRange: [0, 0.42, 0.58, 1],
     outputRange: isRTL ? ["-7deg", "-7deg", "7deg", "-7deg"] : ["7deg", "7deg", "-7deg", "7deg"],
   });
+  const reactionLift = reaction.interpolate({ inputRange: [0, 1], outputRange: [0, outcome === "success" ? -17 : 4] });
+  const reactionTurn = reaction.interpolate({ inputRange: [0, 1], outputRange: ["0deg", outcome === "success" ? (isRTL ? "-16deg" : "16deg") : (isRTL ? "5deg" : "-5deg")] });
+  const reactionScale = reaction.interpolate({ inputRange: [0, 1], outputRange: [1, outcome === "failure" ? 0.94 : 1.04] });
 
   return (
     <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={s.walkWolfStage}>
-      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: lift }, { rotate: turn }, { scaleX: isRTL ? -1 : 1 }] }]}>
+      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: lift }, { translateY: reactionLift }, { rotate: turn }, { rotate: reactionTurn }, { scale: reactionScale }, { scaleX: isRTL ? -1 : 1 }] }]}> 
         {artUnavailable ? (
           <WolfMark size={58} color={color} />
         ) : (
@@ -147,11 +171,13 @@ export function PrivacyGate() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
   const [biometricBusy, setBiometricBusy] = useState(false);
+  const [lockOutcome, setLockOutcome] = useState<{ type: LockOutcome; key: number }>({ type: null, key: 0 });
   const setup = accessState === "setup";
   const pin = kind === "pin";
   const active = setup && first.length === 4 ? confirm : first;
   const security = securityCopy(settings.language);
   const playLockResult = (accepted: boolean) => {
+    setLockOutcome({ type: accepted ? "success" : "failure", key: Date.now() });
     if (!settings.lockSoundsEnabled) return;
     const player = accepted ? successSound : failureSound;
     void setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
@@ -209,7 +235,7 @@ export function PrivacyGate() {
           <View style={s.pinBlock}>
             <Text style={[s.hint, { color: palette.muted }]}>{setup ? first.length < 4 ? copy.choosePin : copy.confirmPin : copy.enterPin}</Text>
             <View style={s.lockSurface}>
-              <WalkingLockWolf color={palette.primary} isRTL={isRTL} />
+              <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
               <View style={s.dots}>
                 {[0, 1, 2, 3].map((item) => <View key={item} style={[s.dot, { backgroundColor: item < active.length ? palette.primary : palette.border }]} />)}
               </View>
@@ -225,12 +251,12 @@ export function PrivacyGate() {
         ) : (
           <View style={s.passwordBlock}>
             <View style={s.lockSurface}>
-              <WalkingLockWolf color={palette.primary} isRTL={isRTL} />
+              <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
               <TextInput value={first} onChangeText={setFirst} placeholder={setup ? copy.choosePassword : copy.enterPassword} placeholderTextColor={palette.muted} secureTextEntry autoCapitalize="none" style={[s.input, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, textAlign: isRTL ? "right" : "left" }]} />
             </View>
             {setup && (
               <View style={s.lockSurface}>
-                <WalkingLockWolf color={palette.primary} isRTL={isRTL} />
+                <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
                 <TextInput value={confirm} onChangeText={setConfirm} placeholder={copy.confirmPassword} placeholderTextColor={palette.muted} secureTextEntry autoCapitalize="none" style={[s.input, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, textAlign: isRTL ? "right" : "left" }]} />
               </View>
             )}
