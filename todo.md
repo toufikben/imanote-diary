@@ -137,3 +137,5 @@
 - [x] Save the declaration that the first free release provides no health features.
 - [x] Prepare and upload the 512×512 Google Play store icon asset.
 - [ ] Upload the approved AAB and configure the internal testing release.
+- [x] Complete the AAB upload, create the production release, and send Private Diary 1.0.0 for Google Play review after explicit owner confirmation.
+- [x] Set the production release availability to all countries and regions after owner confirmation.
