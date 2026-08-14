@@ -4,12 +4,14 @@ import { securityCopy } from "@/lib/imanote/copy";
 import type { DiaryEntry, LockKind } from "@/lib/imanote/types";
 import { MoodBadge } from "@/components/imanote/mood-tags";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Image, PanResponder, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 
 const LOCK_WOLF_ART = "https://imanote-diar-wyf44srw.manus.space/manus-storage/imanote-lock-wolf_3bf9dfcd.png";
+const LOCK_SUCCESS_SOUND = require("@/assets/sounds/lock-success-wolf-howl.wav");
+const LOCK_FAILURE_SOUND = require("@/assets/sounds/lock-failure-gentle.wav");
 
 function Flower({ size = 100, color = "#E989A7", locked = false }: { size?: number; color?: string; locked?: boolean }) {
   return (
@@ -138,6 +140,8 @@ function WalkingLockWolf({ color, isRTL }: { color: string; isRTL: boolean }) {
 
 export function PrivacyGate() {
   const { accessState, configureLock, unlock, unlockWithBiometrics, settings, copy, palette, isRTL } = useDiary();
+  const successSound = useAudioPlayer(LOCK_SUCCESS_SOUND);
+  const failureSound = useAudioPlayer(LOCK_FAILURE_SOUND);
   const [kind, setKind] = useState<LockKind>("pin");
   const [first, setFirst] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -147,6 +151,13 @@ export function PrivacyGate() {
   const pin = kind === "pin";
   const active = setup && first.length === 4 ? confirm : first;
   const security = securityCopy(settings.language);
+  const playLockResult = (accepted: boolean) => {
+    if (!settings.lockSoundsEnabled) return;
+    const player = accepted ? successSound : failureSound;
+    void setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
+    player.seekTo(0);
+    player.play();
+  };
 
   const submit = async () => {
     setError("");
@@ -154,8 +165,12 @@ export function PrivacyGate() {
       if (!isValidLockValue(kind, first)) return setError(copy.invalidPin);
       if (first !== confirm) return setError(copy.mismatch);
       await configureLock(kind, first);
-    } else if (!(await unlock(first))) {
-      setError(copy.wrongLock);
+    } else if (!isValidLockValue(kind, first)) {
+      setError(pin ? copy.invalidPin : copy.wrongLock);
+    } else {
+      const accepted = await unlock(first);
+      playLockResult(accepted);
+      if (!accepted) setError(copy.wrongLock);
     }
   };
 

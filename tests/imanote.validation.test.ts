@@ -24,8 +24,8 @@ describe("Imanote privacy validation", () => {
 
 describe("Imanote local data normalization", () => {
   it("repairs malformed local settings with safe defaults", () => {
-    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15 })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15 });
-    expect(normalizeSettings({ language: "bad", appearance: "bright", dailyReminderEnabled: "yes", dailyReminderHour: 25, dailyReminderMinute: -1, autoLockMinutes: 2 })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 });
+    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15, lockSoundsEnabled: false })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15, lockSoundsEnabled: false });
+    expect(normalizeSettings({ language: "bad", appearance: "bright", dailyReminderEnabled: "yes", dailyReminderHour: 25, dailyReminderMinute: -1, autoLockMinutes: 2, lockSoundsEnabled: "yes" })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5, lockSoundsEnabled: true });
   });
   it("orders local memories by latest modification without mutating the source", () => {
     const source = [
@@ -77,7 +77,7 @@ describe("Imanote encrypted local backups", () => {
   const payload = {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
-    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 as const },
+    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 as const, lockSoundsEnabled: true },
     entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, favorite: true, inkColor: "berry" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };

@@ -35,11 +35,11 @@ export type DiaryEntry = {
   attachments?: PhotoAttachment[];
 };
 
-export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle; dailyReminderEnabled: boolean; dailyReminderHour: number; dailyReminderMinute: number; hideReminderContent: boolean; biometricEnabled: boolean; autoLockMinutes: AutoLockMinutes };
+export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle; dailyReminderEnabled: boolean; dailyReminderHour: number; dailyReminderMinute: number; hideReminderContent: boolean; biometricEnabled: boolean; autoLockMinutes: AutoLockMinutes; lockSoundsEnabled: boolean };
 export type LockRecord = { kind: LockKind; salt: string; verifier: string };
 export type Palette = { background: string; surface: string; softSurface: string; text: string; muted: string; primary: string; primarySoft: string; border: string; danger: string; flower: string; leaf: string };
 
-export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 };
+export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5, lockSoundsEnabled: true };
 export const STICKER_IDS: EntrySticker[] = ["flower", "heart", "star", "coffee", "moon", "leaf", "wolf", "wolfMoon"];
 export const MOOD_IDS: EntryMood[] = ["joyful", "calm", "grateful", "reflective", "sad", "stressed"];
 export const FOLDER_IDS: EntryFolder[] = ["personal", "ideas", "family", "work", "travel"];

@@ -104,4 +104,6 @@
 - [x] Fix the editor voice-record control so it remains visible and reachable above bottom safe-area and tab-bar space.
 - [x] Prepare an Android Google Play submission package with listing copy, privacy/data-safety notes, release checklist, and asset requirements without adding sensitive or external features.
 - [x] Configure EAS production build-version management so each Android App Bundle can receive a non-duplicate version code for Play testing or release.
-- [ ] Verify the recording-control fix, save a recovery checkpoint, and upload the approved local-only release preparation to GitHub main.
+- [x] Verify the recording-control fix, save a recovery checkpoint, and upload the approved local-only release preparation to GitHub main.
+- [x] Add local lock-result sounds: a short wolf howl after a fully accepted PIN/password and a gentle sad sound only after a fully rejected attempt.
+- [x] Add a persisted sound-effects mute control and verify that no sound is emitted for individual PIN digits.

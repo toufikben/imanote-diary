@@ -20,6 +20,7 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
     hideReminderContent: typeof value.hideReminderContent === "boolean" ? value.hideReminderContent : DEFAULT_SETTINGS.hideReminderContent,
     biometricEnabled: typeof value.biometricEnabled === "boolean" ? value.biometricEnabled : DEFAULT_SETTINGS.biometricEnabled,
     autoLockMinutes: value.autoLockMinutes === 0 || value.autoLockMinutes === 1 || value.autoLockMinutes === 5 || value.autoLockMinutes === 15 ? value.autoLockMinutes : DEFAULT_SETTINGS.autoLockMinutes,
+    lockSoundsEnabled: typeof value.lockSoundsEnabled === "boolean" ? value.lockSoundsEnabled : DEFAULT_SETTINGS.lockSoundsEnabled,
   };
 }
 
