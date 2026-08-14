@@ -148,6 +148,8 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
   const reactionLift = reaction.interpolate({ inputRange: [0, 1], outputRange: [0, outcome === "success" ? -17 : 4] });
   const reactionTurn = reaction.interpolate({ inputRange: [0, 1], outputRange: ["0deg", outcome === "success" ? (isRTL ? "-16deg" : "16deg") : (isRTL ? "5deg" : "-5deg")] });
   const reactionScale = reaction.interpolate({ inputRange: [0, 1], outputRange: [1, outcome === "failure" ? 0.94 : 1.04] });
+  const eyeGlowOpacity = reaction.interpolate({ inputRange: [0, 0.18, 0.72, 1], outputRange: [0, 0.95, 0.7, 0] });
+  const eyeGlowScale = reaction.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0.7, 1.18, 0.8] });
 
   return (
     <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={s.walkWolfStage}>
@@ -156,6 +158,12 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
           <WolfMark size={58} color={color} />
         ) : (
           <Image accessibilityIgnoresInvertColors source={{ uri: LOCK_WOLF_ART }} style={s.walkWolfArt} onError={() => setArtUnavailable(true)} />
+        )}
+        {outcome === "success" && (
+          <Animated.View style={[s.wolfEyeGlow, { opacity: eyeGlowOpacity, transform: [{ scale: eyeGlowScale }] }]}> 
+            <View style={s.wolfEyeGlowDot} />
+            <View style={[s.wolfEyeGlowDot, s.wolfEyeGlowDotRight]} />
+          </Animated.View>
         )}
       </Animated.View>
     </View>
@@ -339,6 +347,9 @@ const s = StyleSheet.create({
   walkWolfStage: { position: "absolute", top: -16, width: 126, height: 60, alignItems: "center", justifyContent: "center", zIndex: 2 },
   walkWolf: { position: "absolute", width: 58, height: 58 },
   walkWolfArt: { width: 58, height: 58, resizeMode: "contain" },
+  wolfEyeGlow: { position: "absolute", left: 17, top: 17, width: 26, height: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  wolfEyeGlowDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#F7D56A", shadowColor: "#F4B942", shadowOpacity: 0.95, shadowRadius: 7, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  wolfEyeGlowDotRight: { marginLeft: 1 },
   dots: { flexDirection: "row", justifyContent: "center", gap: 14, marginTop: 28, zIndex: 1 },
   dot: { width: 13, height: 13, borderRadius: 7 },
   keypad: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 10 },

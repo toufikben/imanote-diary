@@ -108,3 +108,4 @@
 - [x] Add local lock-result sounds: a short wolf howl after a fully accepted PIN/password and a gentle sad sound only after a fully rejected attempt.
 - [x] Add a persisted sound-effects mute control and verify that no sound is emitted for individual PIN digits.
 - [x] Add a brief wolf-howl animation after a successful complete unlock and a gentle sad animation after a rejected complete attempt, with no partial-PIN response.
+- [x] Add a subtle, short-lived eye glow only during the successful wolf-howl animation after a complete accepted unlock.
