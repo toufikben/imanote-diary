@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, MOOD_IDS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntryMood, type EntrySticker, type LockKind } from "./types";
+import { DEFAULT_SETTINGS, FOLDER_IDS, MOOD_IDS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntryFolder, type EntryMood, type EntrySticker, type LockKind } from "./types";
 
 export function isValidLockValue(kind: LockKind, value: string) {
   return kind === "pin" ? /^\d{4}$/.test(value) : value.trim().length >= 4;
@@ -33,4 +33,9 @@ export function normalizeStickers(candidate: unknown): EntrySticker[] {
 /** Keeps only the single supported mood category for a private diary entry. */
 export function normalizeMood(candidate: unknown): EntryMood | undefined {
   return typeof candidate === "string" && MOOD_IDS.includes(candidate as EntryMood) ? candidate as EntryMood : undefined;
+}
+
+/** Keeps folder metadata in a small fixed local taxonomy for safe restores. */
+export function normalizeFolder(candidate: unknown): EntryFolder | undefined {
+  return typeof candidate === "string" && FOLDER_IDS.includes(candidate as EntryFolder) ? candidate as EntryFolder : undefined;
 }

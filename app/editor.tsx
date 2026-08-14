@@ -8,15 +8,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PaperPreview, PaperSheet, paperTone, textMetrics } from "@/components/imanote/paper-sheet";
 import { MoodPicker } from "@/components/imanote/mood-tags";
 import { StickerPicker } from "@/components/imanote/sticker-strip";
-import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle } from "@/lib/imanote/copy";
+import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle, writingCopy } from "@/lib/imanote/copy";
 import { useDiary } from "@/lib/imanote/diary-context";
 import { preservePhotoAttachment, preserveVoiceMemo } from "@/lib/imanote/storage";
-import type { EntryFont, EntryFontSize, EntryLineSpacing, EntryMood, EntrySticker, PaperStyle, PhotoAttachment } from "@/lib/imanote/types";
+import type { EntryFolder, EntryFont, EntryFontSize, EntryLineSpacing, EntryMood, EntrySticker, PaperStyle, PhotoAttachment } from "@/lib/imanote/types";
 
 const FONT_OPTIONS: EntryFont[] = ["classic", "clean", "rounded", "mono"];
 const SIZE_OPTIONS: EntryFontSize[] = ["small", "medium", "large"];
 const SPACING_OPTIONS: EntryLineSpacing[] = ["tight", "normal", "relaxed"];
 const PAPER_OPTIONS: PaperStyle[] = ["plain", "ruled", "dots", "blossom", "night"];
+const FOLDER_OPTIONS: EntryFolder[] = ["personal", "ideas", "family", "work", "travel"];
 
 export default function EditorScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -31,6 +32,8 @@ export default function EditorScreen() {
   const [paper, setPaper] = useState<PaperStyle>(existing?.paper ?? settings.defaultPaper);
   const [stickers, setStickers] = useState<EntrySticker[]>(existing?.stickers ?? []);
   const [mood, setMood] = useState<EntryMood | undefined>(existing?.mood);
+  const [folder, setFolder] = useState<EntryFolder | undefined>(existing?.folder);
+  const [isDraft, setIsDraft] = useState(Boolean(existing?.isDraft));
   const [audioUri, setAudioUri] = useState<string | undefined>(existing?.audioUri);
   const [duration, setDuration] = useState(existing?.audioDurationMs);
   const [attachments, setAttachments] = useState<PhotoAttachment[]>(existing?.attachments ?? []);
@@ -38,6 +41,7 @@ export default function EditorScreen() {
   const recorderState = useAudioRecorderState(recorder);
   const textTone = paperTone(paper, palette.text).text;
   const bodyMetrics = textMetrics(fontSize, lineSpacing);
+  const writing = writingCopy(settings.language);
 
   useEffect(() => { void setAudioModeAsync({ playsInSilentMode: true, allowsRecording: true }); }, []);
   const record = async () => {
@@ -52,13 +56,14 @@ export default function EditorScreen() {
     const asset = result.assets[0];
     setAttachments((current) => [...current, { id: asset.assetId ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, uri: asset.uri, name: asset.fileName ?? `photo-${Date.now()}.jpg`, mimeType: asset.mimeType ?? "image/jpeg", width: asset.width, height: asset.height }]);
   };
+  const applyTemplate = (template: { title: string; body: string }) => { setTitle((current) => current.trim() ? current : template.title); setBody((current) => current.trim() ? `${current}\n\n${template.body}` : template.body); };
   const save = async () => {
-    if (!title.trim() && !body.trim()) return Alert.alert(copy.createMemory, copy.requiredBody);
+    if (!isDraft && !title.trim() && !body.trim()) return Alert.alert(copy.createMemory, copy.requiredBody);
     const entryId = existing?.id ?? `memory-${Date.now()}`;
     const transientAudio = audioUri && audioUri !== existing?.audioUri;
     const savedAudio = transientAudio ? await preserveVoiceMemo(audioUri, entryId) : audioUri;
     const savedAttachments = await Promise.all(attachments.map((attachment) => existing?.attachments?.some((saved) => saved.uri === attachment.uri) ? attachment : preservePhotoAttachment(attachment, entryId)));
-    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, mood, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
+    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, mood, folder, isDraft, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
     router.replace({ pathname: "/entry/[id]", params: { id: entry.id } } as any);
   };
 
@@ -73,6 +78,11 @@ export default function EditorScreen() {
       <TextInput value={title} onChangeText={setTitle} placeholder={copy.titlePlaceholder} placeholderTextColor={palette.muted} style={[s.titleInput, { color: palette.text, borderBottomColor: palette.border, textAlign: isRTL ? "right" : "left", fontFamily: fontFamily(font) }]} />
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{moodTitle(settings.language)}</Text>
       <MoodPicker selected={mood} onChange={setMood} palette={palette} language={settings.language} isRTL={isRTL} />
+      <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{writing.templates}</Text>
+      <View style={[s.templateGrid, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{writing.templatesList.map((template) => <Pressable key={template.title} onPress={() => applyTemplate(template)} style={[s.template, { borderColor: palette.border, backgroundColor: palette.softSurface }]}><MaterialIcons name="auto-awesome" size={17} color={palette.primary} /><Text numberOfLines={2} style={{ color: palette.text, fontSize: 13, fontWeight: "800", flex: 1, textAlign: isRTL ? "right" : "left" }}>{template.title}</Text></Pressable>)}</View>
+      <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{writing.folder}</Text>
+      <View style={[s.folderRow, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{FOLDER_OPTIONS.map((item) => <Pressable key={item} onPress={() => setFolder((current) => current === item ? undefined : item)} style={[s.folder, { borderColor: folder === item ? palette.primary : palette.border, backgroundColor: folder === item ? palette.primarySoft : palette.surface }]}><Text style={{ color: palette.text, fontWeight: "800", fontSize: 12 }}>{writing[item]}</Text></Pressable>)}</View>
+      <Pressable onPress={() => setIsDraft((current) => !current)} style={[s.draftToggle, { borderColor: isDraft ? palette.primary : palette.border, backgroundColor: isDraft ? palette.primarySoft : palette.surface, flexDirection: isRTL ? "row-reverse" : "row" }]}><MaterialIcons name={isDraft ? "edit-note" : "note-add"} size={20} color={palette.primary} /><View style={{ flex: 1 }}><Text style={{ color: palette.text, fontWeight: "800", textAlign: isRTL ? "right" : "left" }}>{writing.draft}</Text><Text style={{ color: palette.muted, fontSize: 12, marginTop: 2, textAlign: isRTL ? "right" : "left" }}>{writing.draftHint}</Text></View></Pressable>
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.font}</Text>
       <View style={[s.fonts, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{FONT_OPTIONS.map((item) => <Pressable key={item} onPress={() => setFont(item)} style={[s.font, { borderColor: font === item ? palette.primary : palette.border, backgroundColor: font === item ? palette.primarySoft : palette.surface }]}><Text style={[s.fontName, { color: palette.text, fontFamily: fontFamily(item) }]}>{fontName(item, settings.language)}</Text><Text style={[s.fontSample, { color: palette.muted, fontFamily: fontFamily(item) }]}>أ ب · Aa</Text></Pressable>)}</View>
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.fontSize}</Text>
@@ -93,10 +103,10 @@ export default function EditorScreen() {
     <View pointerEvents="box-none" style={[s.saveDock, { bottom: Math.max(insets.bottom, 12) + 20 }]}>
       <Pressable accessibilityRole="button" accessibilityLabel={copy.save} onPress={() => void save()} style={({ pressed }) => [s.save, { backgroundColor: palette.primary, flexDirection: isRTL ? "row-reverse" : "row" }, pressed && s.savePressed]}>
         <MaterialIcons name="bookmark" size={19} color="#fff" />
-        <Text style={s.saveText}>{copy.save}</Text>
+        <Text style={s.saveText}>{isDraft ? writing.saveDraft : copy.save}</Text>
       </Pressable>
     </View>
   </View>;
 }
 
-const s = StyleSheet.create({ page: { flex: 1 }, top: { minHeight: 68, paddingHorizontal: 16, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1 }, icon: { width: 42, height: 42, alignItems: "center", justifyContent: "center" }, topTitle: { fontSize: 16, fontWeight: "800" }, headerSpacer: { width: 42, height: 42 }, saveDock: { position: "absolute", left: 20, right: 20, bottom: 24 }, save: { minHeight: 52, paddingHorizontal: 20, justifyContent: "center", alignItems: "center", borderRadius: 16, gap: 8, shadowColor: "#241A21", shadowOpacity: 0.16, shadowRadius: 14, shadowOffset: { width: 0, height: 7 }, elevation: 5 }, savePressed: { opacity: 0.9, transform: [{ scale: 0.98 }] }, saveText: { color: "#fff", fontSize: 15, fontWeight: "800" }, content: { padding: 20, paddingBottom: 116 }, label: { fontSize: 13, fontWeight: "800", marginBottom: 8, marginTop: 17 }, titleInput: { minHeight: 48, fontSize: 22, fontWeight: "700", borderBottomWidth: 1, paddingHorizontal: 0 }, fonts: { flexWrap: "wrap", gap: 9 }, font: { minHeight: 70, flexGrow: 1, flexBasis: "46%", borderWidth: 1, borderRadius: 15, paddingHorizontal: 12, justifyContent: "center", gap: 3 }, fontName: { fontSize: 15, fontWeight: "800" }, fontSample: { fontSize: 14 }, chips: { gap: 8 }, chip: { minHeight: 42, flex: 1, borderWidth: 1, borderRadius: 13, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 }, paperGrid: { flexWrap: "wrap", gap: 8 }, paperOption: { width: "31%" }, paperContent: { minHeight: 250 }, bodyInput: { minHeight: 250, paddingHorizontal: 15, paddingTop: 14, paddingBottom: 16 }, photoHeading: { alignItems: "center", gap: 10 }, addPhoto: { minHeight: 35, paddingHorizontal: 11, borderWidth: 1, borderRadius: 11, alignItems: "center", gap: 5 }, photoGrid: { flexWrap: "wrap", gap: 10 }, photoWrap: { width: 86, height: 86, borderWidth: 1, borderRadius: 16, overflow: "visible" }, photo: { width: "100%", height: "100%", borderRadius: 15 }, removePhoto: { position: "absolute", top: -7, right: -7, width: 23, height: 23, borderRadius: 12, alignItems: "center", justifyContent: "center" }, record: { borderWidth: 1, borderRadius: 18, padding: 13, gap: 12, alignItems: "center" }, recordIcon: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" }, recordTitle: { fontSize: 15, fontWeight: "800" }, recordHint: { fontSize: 13, marginTop: 3 } });
+const s = StyleSheet.create({ page: { flex: 1 }, top: { minHeight: 68, paddingHorizontal: 16, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 1 }, icon: { width: 42, height: 42, alignItems: "center", justifyContent: "center" }, topTitle: { fontSize: 16, fontWeight: "800" }, headerSpacer: { width: 42, height: 42 }, saveDock: { position: "absolute", left: 20, right: 20, bottom: 24 }, save: { minHeight: 52, paddingHorizontal: 20, justifyContent: "center", alignItems: "center", borderRadius: 16, gap: 8, shadowColor: "#241A21", shadowOpacity: 0.16, shadowRadius: 14, shadowOffset: { width: 0, height: 7 }, elevation: 5 }, savePressed: { opacity: 0.9, transform: [{ scale: 0.98 }] }, saveText: { color: "#fff", fontSize: 15, fontWeight: "800" }, content: { padding: 20, paddingBottom: 116 }, label: { fontSize: 13, fontWeight: "800", marginBottom: 8, marginTop: 17 }, titleInput: { minHeight: 48, fontSize: 22, fontWeight: "700", borderBottomWidth: 1, paddingHorizontal: 0 }, templateGrid: { flexWrap: "wrap", gap: 8 }, template: { minHeight: 58, width: "48%", borderWidth: 1, borderRadius: 14, padding: 10, gap: 6, alignItems: "center", flexDirection: "row" }, folderRow: { flexWrap: "wrap", gap: 7 }, folder: { minHeight: 37, borderWidth: 1, borderRadius: 12, paddingHorizontal: 11, alignItems: "center", justifyContent: "center" }, draftToggle: { marginTop: 12, borderWidth: 1, borderRadius: 15, padding: 12, gap: 10, alignItems: "center" }, fonts: { flexWrap: "wrap", gap: 9 }, font: { minHeight: 70, flexGrow: 1, flexBasis: "46%", borderWidth: 1, borderRadius: 15, paddingHorizontal: 12, justifyContent: "center", gap: 3 }, fontName: { fontSize: 15, fontWeight: "800" }, fontSample: { fontSize: 14 }, chips: { gap: 8 }, chip: { minHeight: 42, flex: 1, borderWidth: 1, borderRadius: 13, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 }, paperGrid: { flexWrap: "wrap", gap: 8 }, paperOption: { width: "31%" }, paperContent: { minHeight: 250 }, bodyInput: { minHeight: 250, paddingHorizontal: 15, paddingTop: 14, paddingBottom: 16 }, photoHeading: { alignItems: "center", gap: 10 }, addPhoto: { minHeight: 35, paddingHorizontal: 11, borderWidth: 1, borderRadius: 11, alignItems: "center", gap: 5 }, photoGrid: { flexWrap: "wrap", gap: 10 }, photoWrap: { width: 86, height: 86, borderWidth: 1, borderRadius: 16, overflow: "visible" }, photo: { width: "100%", height: "100%", borderRadius: 15 }, removePhoto: { position: "absolute", top: -7, right: -7, width: 23, height: 23, borderRadius: 12, alignItems: "center", justifyContent: "center" }, record: { borderWidth: 1, borderRadius: 18, padding: 13, gap: 12, alignItems: "center" }, recordIcon: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" }, recordTitle: { fontSize: 15, fontWeight: "800" }, recordHint: { fontSize: 13, marginTop: 3 } });
