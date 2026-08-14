@@ -141,3 +141,4 @@
 - [x] Set the production release availability to all countries and regions after owner confirmation.
 - [x] Confirm that Managed publishing is disabled so the approved production release publishes automatically.
 - [x] Prepare and save Arabic and French localized Google Play store listings for Private Diary.
+- [x] Capture and prepare Arabic and French Google Play phone screenshots for Private Diary.
