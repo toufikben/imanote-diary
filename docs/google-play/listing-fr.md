@@ -3,13 +3,13 @@
 | Champ | Texte proposé |
 |---|---|
 | Nom de l’application | **Private Diary** |
-| Description courte | Journal privé local pour textes, notes vocales, photos et souvenirs. |
+| Description courte | Journal privé local : textes, audio, photos et souvenirs. |
 | Catégorie | Style de vie |
-| E-mail d’assistance | Ajoutez une adresse e-mail contrôlée par le développeur avant l’envoi. |
+| E-mail d’assistance | toufik155@gmail.com |
 
 ## Description complète
 
-Private Diary est un journal personnel conçu pour écrire sereinement et conserver vos souvenirs sur votre appareil. Écrivez librement, ajoutez des photos ou des notes vocales, puis choisissez la police, le papier, la couleur d’encre et les autocollants adaptés à votre page.
+Private Diary est un journal personnel conçu pour écrire sereinement et conserver vos souvenirs sur votre appareil. Écrivez librement en français, en arabe ou en anglais, ajoutez des photos ou des notes vocales, puis choisissez la police, le papier, la couleur d’encre et les autocollants adaptés à votre page.
 
 Vos souvenirs restent sur votre téléphone. Protégez-les par un code PIN ou un mot de passe, avec un déverrouillage biométrique facultatif sur les appareils compatibles. Vous pouvez également définir un rappel quotidien discret qui ne révèle pas le contenu du journal dans la notification.
 

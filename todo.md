@@ -140,3 +140,4 @@
 - [x] Complete the AAB upload, create the production release, and send Private Diary 1.0.0 for Google Play review after explicit owner confirmation.
 - [x] Set the production release availability to all countries and regions after owner confirmation.
 - [x] Confirm that Managed publishing is disabled so the approved production release publishes automatically.
+- [x] Prepare and save Arabic and French localized Google Play store listings for Private Diary.
