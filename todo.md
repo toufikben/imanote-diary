@@ -118,11 +118,22 @@
 - [x] Confirm the latest production AAB build status and provide the Google Play release handoff steps without submitting to the store.
 - [x] Verify Google Play Console developer-account readiness and access for Private Diary.
 - [x] Create the Google Play Console application record for Private Diary with the confirmed name, package identifier, language, and free pricing.
-- [ ] Prepare the Play Console store listing and mandatory app-information declarations.
+- [x] Prepare the Play Console store listing and mandatory app-information declarations.
 - [x] Create a public privacy-policy page and in-app link for the Private Diary Google Play listing; public availability awaits owner publication.
 - [x] Publish and verify the public privacy-policy URL required by Google Play Console.
+- [x] Save the verified public privacy-policy URL in Google Play Console.
 - [x] Add the confirmed public support email to the Google Play store listing contact details.
 - [x] Research and document privacy-aligned monetization options before adding ads, payments, or external SDKs.
-- [ ] Confirm the first monetization model before adding ads, billing, payments, or external SDKs.
-- [ ] Obtain explicit confirmation of the target release track before uploading the production AAB.
-- [ ] Upload the approved AAB and configure the approved Google Play release track.
+- [x] Confirm that the first release is fully free and contains no ads, billing, payments, analytics, or external SDKs.
+- [x] Confirm the internal-testing release track for the verified AAB; production publication remains separately unapproved.
+- [x] Complete the Play Console store listing and mandatory declarations for the free ad-free release.
+- [x] Save Google Play reviewer access instructions for the local PIN, password, and optional biometric lock.
+- [x] Declare and save that the first free release contains no advertisements.
+- [x] Complete and save the IARC content-rating questionnaire with the approved all-ages ratings.
+- [x] Save the target audience declaration as 18 and over without applying the optional minor-access block.
+- [x] Save the data-safety declaration: no data collection and no data sharing in the first local-only release.
+- [x] Save the declaration that Private Diary is not a government application.
+- [x] Save the declaration that the first free release provides no financial features.
+- [x] Save the declaration that the first free release provides no health features.
+- [x] Prepare and upload the 512×512 Google Play store icon asset.
+- [ ] Upload the approved AAB and configure the internal testing release.
