@@ -71,7 +71,7 @@ const config: ExpoConfig = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    permissions: ["POST_NOTIFICATIONS"],
+    permissions: ["POST_NOTIFICATIONS", "RECORD_AUDIO"],
     intentFilters: [
       {
         action: "VIEW",
@@ -98,6 +98,13 @@ const config: ExpoConfig = {
       {
         microphonePermission:
           "Allow $(PRODUCT_NAME) to access your microphone for private voice memories.",
+      },
+    ],
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "Allow $(PRODUCT_NAME) to select photos for private diary memories.",
       },
     ],
     [
