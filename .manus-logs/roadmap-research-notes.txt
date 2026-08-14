@@ -19,3 +19,25 @@ Relevant publicly listed patterns: prompts and templates reduce blank-page frict
 Source: Google Play, Diarium
 URL: https://play.google.com/store/apps/details?id=partl.Diarium&hl=en_US
 Relevant publicly listed patterns: rich entry metadata, mood and tracker tags, handwriting/drawing, imports/exports, optional personal-cloud sync without a proprietary account, and widgets. Evaluate each only when it preserves Imanote's local-first privacy model.
+
+Expanded research candidate sources, 2026-08-13
+
+Local Journal (Apple App Store): https://apps.apple.com/us/app/local-journal-private-diary/id6760919814
+Candidate topics: built-in prompts, free writing, gratitude, a timeline, and instant search.
+
+Reflection guide: https://www.reflection.app/blog/best-journaling-apps
+Candidate topics: personalized prompts, guided insights, and pattern recognition. Treat AI processing as opt-in and device-local where possible.
+
+iMoodJournal: https://www.imoodjournal.com/
+Candidate topics: flexible trackers such as mood, sleep, symptoms, or medication. Do not frame the product as diagnostic.
+
+Day One privacy FAQ: https://dayoneapp.com/privacy-faqs/
+Candidate topic: clear user control over encryption and export keys.
+
+Reviewed source finding — Day One Privacy & Security FAQs, 2026-08-13
+
+Publicly stated patterns: an option to stay local without an account; a clear explanation of where data and encryption keys reside; encryption during sync; passcode and biometric safeguards; concealed content; and data export choices. Imanote takeaway: add a “privacy centre” that plainly says “stored on this device,” displays the last backup date, offers optional biometric unlock, supports discreet notification text, and makes encrypted export/restoration understandable. Source: https://dayoneapp.com/privacy-faqs/
+
+Reviewed source finding — Local Journal: Private Diary (Apple App Store), 2026-08-13
+
+Publicly listed patterns: prompt-led free writing, daily reflection and gratitude templates, a chronological timeline, on-device search, on-device voice transcription, user-selected export destinations through the system share sheet, and portable text/PDF/JSON exports. Imanote takeaway: combine a “blank page” with private prompt decks, retain the existing encrypted backup, add human-readable exports, offer deliberate manual sharing, and consider offline transcription only after an explicit privacy review. Source: https://apps.apple.com/us/app/local-journal-private-diary/id6760919814

@@ -86,3 +86,11 @@
 - [x] Move the editor save action lower in the screen while retaining safe touch spacing from the bottom edge.
 - [x] Verify the adjusted save action layout and save a checkpoint before requesting GitHub upload approval.
 - [x] Prepare a prioritized, privacy-first roadmap of potential Imanote improvements without implementing unapproved features.
+- [x] Research and prepare a numbered, comprehensive innovation catalogue for Imanote without implementing unapproved features.
+- [x] Replace the hiding lock-screen wolf with a small rotating, walking wolf beside the PIN and password controls.
+- [ ] Implement local discovery features: full-screen photo viewing, favourites, search, filters, and memory resurfacing.
+- [ ] Implement local writing and creative features: prompts, templates, drafts, folders, handwriting/drawing, and visual customisation.
+- [ ] Implement local reflection features: intensity and energy choices, gratitude, weekly/monthly private summaries, and gentle routines.
+- [ ] Implement local privacy and reliability features: biometric unlock, configurable auto-lock, discreet app switching, readable export, and backup integrity checks.
+- [ ] Document and request a separate decision before enabling capabilities that require sensitive permissions, external processing, or cross-device sync.
+- [ ] Test each delivered development batch and save a recovery checkpoint before requesting GitHub upload approval.
