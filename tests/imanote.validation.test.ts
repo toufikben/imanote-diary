@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
 import { getCopy, moodName } from "../lib/imanote/copy";
 import { getLockWolfPeekProgress } from "../lib/imanote/lock-wolf";
-import { normalizeMood, normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
+import { normalizeDrawing, normalizeInkColor, normalizeMood, normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
 describe("Imanote privacy validation", () => {
   it("accepts only a four-digit PIN and a non-trivial password", () => {
@@ -43,6 +43,15 @@ describe("Imanote local data normalization", () => {
     expect(normalizeMood("unknown")).toBeUndefined();
     expect(normalizeMood(["calm"])).toBeUndefined();
   });
+  it("keeps only an approved local ink color", () => {
+    expect(normalizeInkColor("teal")).toBe("teal");
+    expect(normalizeInkColor("#00ffff")).toBeUndefined();
+    expect(normalizeInkColor(["teal"])).toBeUndefined();
+  });
+  it("keeps compact, valid handwriting strokes only", () => {
+    expect(normalizeDrawing([{ color: "#334455", width: 3, points: [{ x: 1, y: 2 }, { x: 8, y: 9 }] }, { color: "#000", width: 99, points: [{ x: 1, y: 2 }, { x: 3, y: 4 }] }])).toEqual([{ color: "#334455", width: 3, points: [{ x: 1, y: 2 }, { x: 8, y: 9 }] }]);
+    expect(normalizeDrawing("not-a-drawing")).toBeUndefined();
+  });
 });
 
 describe("Imanote localization", () => {
@@ -63,7 +72,7 @@ describe("Imanote encrypted local backups", () => {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
     settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0 },
-    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, favorite: true, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
+    entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, favorite: true, inkColor: "berry" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };
   it("round-trips a valid backup only with its password", () => {
@@ -81,6 +90,10 @@ describe("Imanote encrypted local backups", () => {
   });
   it("rejects a backup entry with an invalid favorite flag", () => {
     const malformed = { ...payload, entries: [{ ...payload.entries[0], favorite: "yes" }] };
+    expect(() => validateBackupPayload(malformed)).toThrow();
+  });
+  it("rejects a backup entry with an unsupported ink color", () => {
+    const malformed = { ...payload, entries: [{ ...payload.entries[0], inkColor: "neon" }] };
     expect(() => validateBackupPayload(malformed)).toThrow();
   });
 });

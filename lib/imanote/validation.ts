@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, FOLDER_IDS, MOOD_IDS, STICKER_IDS, type DiaryEntry, type DiarySettings, type EntryFolder, type EntryMood, type EntrySticker, type LockKind } from "./types";
+import { DEFAULT_SETTINGS, FOLDER_IDS, INK_COLORS, MOOD_IDS, STICKER_IDS, type DiaryEntry, type DiarySettings, type DrawingStroke, type EntryFolder, type EntryMood, type EntrySticker, type InkColor, type LockKind } from "./types";
 
 export function isValidLockValue(kind: LockKind, value: string) {
   return kind === "pin" ? /^\d{4}$/.test(value) : value.trim().length >= 4;
@@ -38,4 +38,22 @@ export function normalizeMood(candidate: unknown): EntryMood | undefined {
 /** Keeps folder metadata in a small fixed local taxonomy for safe restores. */
 export function normalizeFolder(candidate: unknown): EntryFolder | undefined {
   return typeof candidate === "string" && FOLDER_IDS.includes(candidate as EntryFolder) ? candidate as EntryFolder : undefined;
+}
+
+/** Keeps the saved ink choice inside the fixed, accessibility-reviewed local palette. */
+export function normalizeInkColor(candidate: unknown): InkColor | undefined {
+  return typeof candidate === "string" && INK_COLORS.includes(candidate as InkColor) ? candidate as InkColor : undefined;
+}
+
+/** Keeps a compact, safe set of locally drawn strokes during restore. */
+export function normalizeDrawing(candidate: unknown): DrawingStroke[] | undefined {
+  if (!Array.isArray(candidate)) return undefined;
+  const strokes = candidate.slice(0, 40).flatMap((stroke) => {
+    if (!stroke || typeof stroke !== "object") return [];
+    const item = stroke as { color?: unknown; width?: unknown; points?: unknown };
+    if (typeof item.color !== "string" || item.color.length > 16 || typeof item.width !== "number" || item.width < 1 || item.width > 12 || !Array.isArray(item.points)) return [];
+    const points = item.points.slice(0, 500).flatMap((point) => point && typeof point === "object" && typeof (point as { x?: unknown }).x === "number" && typeof (point as { y?: unknown }).y === "number" ? [{ x: (point as { x: number }).x, y: (point as { y: number }).y }] : []);
+    return points.length > 1 ? [{ color: item.color, width: item.width, points }] : [];
+  });
+  return strokes.length ? strokes : undefined;
 }

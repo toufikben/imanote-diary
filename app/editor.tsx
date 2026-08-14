@@ -7,11 +7,13 @@ import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PaperPreview, PaperSheet, paperTone, textMetrics } from "@/components/imanote/paper-sheet";
 import { MoodPicker } from "@/components/imanote/mood-tags";
+import { DrawingPad } from "@/components/imanote/drawing-pad";
+import { InkColorPicker } from "@/components/imanote/ink-color-picker";
 import { StickerPicker } from "@/components/imanote/sticker-strip";
 import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle, writingCopy } from "@/lib/imanote/copy";
 import { useDiary } from "@/lib/imanote/diary-context";
 import { preservePhotoAttachment, preserveVoiceMemo } from "@/lib/imanote/storage";
-import type { EntryFolder, EntryFont, EntryFontSize, EntryLineSpacing, EntryMood, EntrySticker, PaperStyle, PhotoAttachment } from "@/lib/imanote/types";
+import { INK_COLOR_VALUES, type DrawingStroke, type EntryFolder, type EntryFont, type EntryFontSize, type EntryLineSpacing, type EntryMood, type EntrySticker, type InkColor, type PaperStyle, type PhotoAttachment } from "@/lib/imanote/types";
 
 const FONT_OPTIONS: EntryFont[] = ["classic", "clean", "rounded", "mono"];
 const SIZE_OPTIONS: EntryFontSize[] = ["small", "medium", "large"];
@@ -34,12 +36,15 @@ export default function EditorScreen() {
   const [mood, setMood] = useState<EntryMood | undefined>(existing?.mood);
   const [folder, setFolder] = useState<EntryFolder | undefined>(existing?.folder);
   const [isDraft, setIsDraft] = useState(Boolean(existing?.isDraft));
+  const [inkColor, setInkColor] = useState<InkColor>(existing?.inkColor ?? "graphite");
+  const [drawing, setDrawing] = useState<DrawingStroke[]>(existing?.drawing ?? []);
   const [audioUri, setAudioUri] = useState<string | undefined>(existing?.audioUri);
   const [duration, setDuration] = useState(existing?.audioDurationMs);
   const [attachments, setAttachments] = useState<PhotoAttachment[]>(existing?.attachments ?? []);
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
   const textTone = paperTone(paper, palette.text).text;
+  const inkTone = paper === "night" && inkColor === "graphite" ? "#F0E6D8" : INK_COLOR_VALUES[inkColor];
   const bodyMetrics = textMetrics(fontSize, lineSpacing);
   const writing = writingCopy(settings.language);
 
@@ -63,7 +68,7 @@ export default function EditorScreen() {
     const transientAudio = audioUri && audioUri !== existing?.audioUri;
     const savedAudio = transientAudio ? await preserveVoiceMemo(audioUri, entryId) : audioUri;
     const savedAttachments = await Promise.all(attachments.map((attachment) => existing?.attachments?.some((saved) => saved.uri === attachment.uri) ? attachment : preservePhotoAttachment(attachment, entryId)));
-    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, mood, folder, isDraft, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
+    const entry = await saveEntry({ id: existing?.id, title: title.trim(), body: body.trim(), font, fontSize, lineSpacing, paper, stickers, mood, folder, isDraft, inkColor, drawing, audioUri: savedAudio, audioDurationMs: duration, attachments: savedAttachments });
     router.replace({ pathname: "/entry/[id]", params: { id: entry.id } } as any);
   };
 
@@ -91,10 +96,13 @@ export default function EditorScreen() {
       <View style={[s.chips, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{SPACING_OPTIONS.map((item) => <Pressable key={item} onPress={() => setLineSpacing(item)} style={[s.chip, { borderColor: lineSpacing === item ? palette.primary : palette.border, backgroundColor: lineSpacing === item ? palette.primarySoft : palette.surface }]}><Text style={{ color: palette.text, fontWeight: "800", lineHeight: item === "tight" ? 16 : item === "relaxed" ? 25 : 20 }}>{lineSpacingName(item, settings.language)}</Text></Pressable>)}</View>
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.paper}</Text>
       <View style={[s.paperGrid, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{PAPER_OPTIONS.map((item) => <Pressable key={item} onPress={() => setPaper(item)} style={s.paperOption}><PaperPreview paper={item} label={paperName(item, settings.language)} selected={paper === item} /></Pressable>)}</View>
+      <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{settings.language === "ar" ? "لون الحبر" : settings.language === "fr" ? "Couleur de l’encre" : "Ink color"}</Text>
+      <InkColorPicker selected={inkColor} onChange={setInkColor} palette={palette} language={settings.language} isRTL={isRTL} />
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{stickerTitle(settings.language)}</Text>
       <StickerPicker selected={stickers} onChange={setStickers} palette={palette} language={settings.language} isRTL={isRTL} />
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.body}</Text>
-      <PaperSheet paper={paper} contentStyle={s.paperContent}><TextInput value={body} onChangeText={setBody} placeholder={copy.bodyPlaceholder} placeholderTextColor={paper === "night" ? "#AFA79A" : palette.muted} multiline textAlignVertical="top" style={[s.bodyInput, { color: textTone, textAlign: isRTL ? "right" : "left", writingDirection: isRTL ? "rtl" : "ltr", fontFamily: fontFamily(font), ...bodyMetrics }]} /></PaperSheet>
+      <PaperSheet paper={paper} contentStyle={s.paperContent}><TextInput value={body} onChangeText={setBody} placeholder={copy.bodyPlaceholder} placeholderTextColor={paper === "night" ? "#AFA79A" : palette.muted} multiline textAlignVertical="top" style={[s.bodyInput, { color: inkTone || textTone, textAlign: isRTL ? "right" : "left", writingDirection: isRTL ? "rtl" : "ltr", fontFamily: fontFamily(font), ...bodyMetrics }]} /></PaperSheet>
+      <DrawingPad value={drawing} onChange={setDrawing} palette={palette} isRTL={isRTL} language={settings.language} strokeColor={inkTone} />
       <View style={[s.photoHeading, { flexDirection: isRTL ? "row-reverse" : "row" }]}><Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left", flex: 1 }]}>{copy.photos}</Text><Pressable onPress={() => void pickPhoto()} style={[s.addPhoto, { borderColor: palette.primary, backgroundColor: palette.primarySoft, flexDirection: isRTL ? "row-reverse" : "row" }]}><MaterialIcons name="add-photo-alternate" color={palette.primary} size={18} /><Text style={{ color: palette.primary, fontWeight: "800", fontSize: 13 }}>{copy.addPhoto}</Text></Pressable></View>
       {attachments.length > 0 && <View style={[s.photoGrid, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{attachments.map((attachment) => <View key={attachment.id} style={[s.photoWrap, { borderColor: palette.border }]}><Image source={{ uri: attachment.uri }} style={s.photo} /><Pressable onPress={() => setAttachments((items) => items.filter((item) => item.id !== attachment.id))} style={[s.removePhoto, { backgroundColor: palette.danger }]}><MaterialIcons name="close" color="#fff" size={15} /></Pressable></View>)}</View>}
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.voiceNote}</Text>

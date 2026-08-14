@@ -4,10 +4,12 @@ import { Alert, Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } fr
 import { useState } from "react";
 import { PaperSheet, paperTone, textMetrics } from "@/components/imanote/paper-sheet";
 import { MoodBadge } from "@/components/imanote/mood-tags";
+import { DrawingPreview } from "@/components/imanote/drawing-pad";
 import { StickerRow } from "@/components/imanote/sticker-strip";
 import { AudioPlayback, formatDiaryDate } from "@/components/imanote/visuals";
 import { discoveryCopy } from "@/lib/imanote/copy";
 import { useDiary } from "@/lib/imanote/diary-context";
+import { INK_COLOR_VALUES } from "@/lib/imanote/types";
 
 export default function EntryDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -16,6 +18,7 @@ export default function EntryDetail() {
   const entry = entries.find((item) => item.id === id);
   if (!entry) return <View style={[s.page, { backgroundColor: palette.background, alignItems: "center", justifyContent: "center" }]}><Text style={{ color: palette.muted }}>{copy.noMemories}</Text></View>;
   const tone = paperTone(entry.paper, palette.text);
+  const inkTone = entry.paper === "night" && entry.inkColor === "graphite" ? "#F0E6D8" : entry.inkColor ? INK_COLOR_VALUES[entry.inkColor] : tone.text;
   const discovery = discoveryCopy(settings.language);
   const metrics = textMetrics(entry.fontSize, entry.lineSpacing, 17);
   const remove = () => Alert.alert(copy.delete, entry.title || copy.delete, [{ text: copy.cancel, style: "cancel" }, { text: copy.delete, style: "destructive", onPress: () => { void deleteEntry(entry.id); router.replace("/" as any); } }]);
@@ -28,8 +31,9 @@ export default function EntryDetail() {
         <StickerRow stickers={entry.stickers} palette={palette} isRTL={isRTL} />
         <Text style={[s.title, { color: tone.text, textAlign: isRTL ? "right" : "left", fontFamily: fontFamily(entry.font), ...textMetrics(entry.fontSize, entry.lineSpacing, 28) }]}>{entry.title || "—"}</Text>
         {entry.attachments?.length ? <View style={s.images}><Text style={[s.imageLabel, { color: entry.paper === "night" ? "#C6BCAE" : palette.muted, textAlign: isRTL ? "right" : "left" }]}>{copy.photos}</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[s.imageRow, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{entry.attachments.map((attachment) => <Pressable key={attachment.id} accessibilityRole="imagebutton" accessibilityLabel={copy.photos} onPress={() => setPhotoUri(attachment.uri)}><Image source={{ uri: attachment.uri }} style={[s.image, { borderColor: entry.paper === "night" ? "#554B3D" : palette.border }]} /></Pressable>)}</ScrollView></View> : null}
+        <DrawingPreview strokes={entry.drawing} palette={palette} />
         {entry.audioUri && <AudioPlayback uri={entry.audioUri} durationMs={entry.audioDurationMs} />}
-        <Text style={[s.body, { color: tone.text, textAlign: isRTL ? "right" : "left", writingDirection: isRTL ? "rtl" : "ltr", fontFamily: fontFamily(entry.font), ...metrics }]}>{entry.body}</Text>
+        <Text style={[s.body, { color: inkTone, textAlign: isRTL ? "right" : "left", writingDirection: isRTL ? "rtl" : "ltr", fontFamily: fontFamily(entry.font), ...metrics }]}>{entry.body}</Text>
       </PaperSheet>
     </ScrollView>
     <Modal visible={!!photoUri} transparent animationType="fade" onRequestClose={() => setPhotoUri(null)}><View style={s.photoModal}><Pressable accessibilityRole="button" accessibilityLabel={discovery.closePhoto} onPress={() => setPhotoUri(null)} style={s.photoClose}><MaterialIcons name="close" size={28} color="#fff" /></Pressable>{photoUri && <Image source={{ uri: photoUri }} resizeMode="contain" style={s.fullPhoto} />}</View></Modal>
