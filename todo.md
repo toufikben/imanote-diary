@@ -97,3 +97,7 @@
 - [ ] Implement local privacy and reliability features: biometric unlock, configurable auto-lock, discreet app switching, readable export, and backup integrity checks.
 - [ ] Document and request a separate decision before enabling capabilities that require sensitive permissions, external processing, or cross-device sync.
 - [ ] Test each delivered development batch and save a recovery checkpoint before requesting GitHub upload approval.
+- [x] Add on-device wellbeing insights: mood totals, weekly mood chart, gratitude prompts, entry totals, active-day insight, and writing streak.
+- [x] Add on-device privacy and reliability controls: biometric unlock, configurable auto-lock, discreet reminder content, and confirmed secure local wipe.
+- [x] Verify the completed local feature batches and save a recovery checkpoint.
+- [ ] Upload all approved local feature batches to GitHub main, excluding sensitive/external features, and verify the resulting Android build requests.

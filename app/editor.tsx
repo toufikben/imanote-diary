@@ -10,8 +10,9 @@ import { MoodPicker } from "@/components/imanote/mood-tags";
 import { DrawingPad } from "@/components/imanote/drawing-pad";
 import { InkColorPicker } from "@/components/imanote/ink-color-picker";
 import { StickerPicker } from "@/components/imanote/sticker-strip";
-import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle, writingCopy } from "@/lib/imanote/copy";
+import { fontName, fontSizeName, lineSpacingName, moodTitle, paperName, stickerTitle, wellbeingCopy, writingCopy } from "@/lib/imanote/copy";
 import { useDiary } from "@/lib/imanote/diary-context";
+import { gratitudePromptIndex } from "@/lib/imanote/insights";
 import { preservePhotoAttachment, preserveVoiceMemo } from "@/lib/imanote/storage";
 import { INK_COLOR_VALUES, type DrawingStroke, type EntryFolder, type EntryFont, type EntryFontSize, type EntryLineSpacing, type EntryMood, type EntrySticker, type InkColor, type PaperStyle, type PhotoAttachment } from "@/lib/imanote/types";
 
@@ -47,6 +48,8 @@ export default function EditorScreen() {
   const inkTone = paper === "night" && inkColor === "graphite" ? "#F0E6D8" : INK_COLOR_VALUES[inkColor];
   const bodyMetrics = textMetrics(fontSize, lineSpacing);
   const writing = writingCopy(settings.language);
+  const wellbeing = wellbeingCopy(settings.language);
+  const gratitudePrompt = wellbeing.prompts[gratitudePromptIndex()];
 
   useEffect(() => { void setAudioModeAsync({ playsInSilentMode: true, allowsRecording: true }); }, []);
   const record = async () => {
@@ -85,6 +88,8 @@ export default function EditorScreen() {
       <MoodPicker selected={mood} onChange={setMood} palette={palette} language={settings.language} isRTL={isRTL} />
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{writing.templates}</Text>
       <View style={[s.templateGrid, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{writing.templatesList.map((template) => <Pressable key={template.title} onPress={() => applyTemplate(template)} style={[s.template, { borderColor: palette.border, backgroundColor: palette.softSurface }]}><MaterialIcons name="auto-awesome" size={17} color={palette.primary} /><Text numberOfLines={2} style={{ color: palette.text, fontSize: 13, fontWeight: "800", flex: 1, textAlign: isRTL ? "right" : "left" }}>{template.title}</Text></Pressable>)}</View>
+      <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{wellbeing.gratitude}</Text>
+      <Pressable onPress={() => applyTemplate({ title: wellbeing.gratitude, body: `${gratitudePrompt}\n\n` })} style={[s.draftToggle, { marginTop: 0, borderColor: palette.border, backgroundColor: palette.primarySoft, flexDirection: isRTL ? "row-reverse" : "row" }]}><MaterialIcons name="favorite-border" color={palette.primary} size={20} /><View style={{ flex: 1 }}><Text style={{ color: palette.text, fontWeight: "800", textAlign: isRTL ? "right" : "left" }}>{gratitudePrompt}</Text><Text style={{ color: palette.muted, fontSize: 12, marginTop: 3, textAlign: isRTL ? "right" : "left" }}>{wellbeing.gratitudeHint}</Text></View></Pressable>
       <Text style={[s.label, { color: palette.muted, textAlign: isRTL ? "right" : "left" }]}>{writing.folder}</Text>
       <View style={[s.folderRow, { flexDirection: isRTL ? "row-reverse" : "row" }]}>{FOLDER_OPTIONS.map((item) => <Pressable key={item} onPress={() => setFolder((current) => current === item ? undefined : item)} style={[s.folder, { borderColor: folder === item ? palette.primary : palette.border, backgroundColor: folder === item ? palette.primarySoft : palette.surface }]}><Text style={{ color: palette.text, fontWeight: "800", fontSize: 12 }}>{writing[item]}</Text></Pressable>)}</View>
       <Pressable onPress={() => setIsDraft((current) => !current)} style={[s.draftToggle, { borderColor: isDraft ? palette.primary : palette.border, backgroundColor: isDraft ? palette.primarySoft : palette.surface, flexDirection: isRTL ? "row-reverse" : "row" }]}><MaterialIcons name={isDraft ? "edit-note" : "note-add"} size={20} color={palette.primary} /><View style={{ flex: 1 }}><Text style={{ color: palette.text, fontWeight: "800", textAlign: isRTL ? "right" : "left" }}>{writing.draft}</Text><Text style={{ color: palette.muted, fontSize: 12, marginTop: 2, textAlign: isRTL ? "right" : "left" }}>{writing.draftHint}</Text></View></Pressable>

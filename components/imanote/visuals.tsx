@@ -1,5 +1,6 @@
 import { useDiary } from "@/lib/imanote/diary-context";
 import { isValidLockValue } from "@/lib/imanote/validation";
+import { securityCopy } from "@/lib/imanote/copy";
 import type { DiaryEntry, LockKind } from "@/lib/imanote/types";
 import { MoodBadge } from "@/components/imanote/mood-tags";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -136,14 +137,16 @@ function WalkingLockWolf({ color, isRTL }: { color: string; isRTL: boolean }) {
 }
 
 export function PrivacyGate() {
-  const { accessState, configureLock, unlock, copy, palette, isRTL } = useDiary();
+  const { accessState, configureLock, unlock, unlockWithBiometrics, settings, copy, palette, isRTL } = useDiary();
   const [kind, setKind] = useState<LockKind>("pin");
   const [first, setFirst] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [biometricBusy, setBiometricBusy] = useState(false);
   const setup = accessState === "setup";
   const pin = kind === "pin";
   const active = setup && first.length === 4 ? confirm : first;
+  const security = securityCopy(settings.language);
 
   const submit = async () => {
     setError("");
@@ -162,6 +165,13 @@ export function PrivacyGate() {
     }
     if (first.length < 4) setFirst((current) => `${current}${value}`);
     else if (setup && confirm.length < 4) setConfirm((current) => `${current}${value}`);
+  };
+  const useBiometrics = async () => {
+    setError(""); setBiometricBusy(true);
+    const result = await unlockWithBiometrics(security.biometricAction);
+    setBiometricBusy(false);
+    if (result === "unavailable") setError(security.biometricUnavailable);
+    else if (result === "failed") setError(security.biometricFailed);
   };
 
   return (
@@ -212,6 +222,7 @@ export function PrivacyGate() {
           </View>
         )}
         {!!error && <Text style={[s.error, { color: palette.danger }]}>{error}</Text>}
+        {!setup && settings.biometricEnabled && <Pressable disabled={biometricBusy} onPress={() => void useBiometrics()} style={({ pressed }) => [s.biometric, { borderColor: palette.border, backgroundColor: palette.surface, opacity: pressed || biometricBusy ? 0.7 : 1, flexDirection: isRTL ? "row-reverse" : "row" }]}><MaterialIcons name="fingerprint" size={21} color={palette.primary} /><Text style={{ color: palette.text, fontWeight: "800" }}>{security.biometricAction}</Text></Pressable>}
         <Pressable onPress={() => void submit()} style={({ pressed }) => [s.primary, { backgroundColor: palette.primary, opacity: pressed ? 0.85 : 1 }]}>
           <Text style={s.primaryText}>{setup ? copy.createLock : copy.unlock}</Text>
         </Pressable>
@@ -295,6 +306,7 @@ const s = StyleSheet.create({
   passwordBlock: { gap: 12 },
   input: { minHeight: 54, width: "100%", marginTop: 20, paddingHorizontal: 16, fontSize: 16, borderRadius: 16, borderWidth: 1, zIndex: 1 },
   error: { textAlign: "center", fontSize: 14, fontWeight: "700" },
+  biometric: { minHeight: 50, borderRadius: 16, borderWidth: 1, alignItems: "center", justifyContent: "center", gap: 8 },
   primary: { minHeight: 54, borderRadius: 17, alignItems: "center", justifyContent: "center" },
   primaryText: { color: "#fff", fontSize: 16, fontWeight: "800" },
   card: { borderWidth: 1, borderRadius: 20, padding: 15, marginBottom: 11 },

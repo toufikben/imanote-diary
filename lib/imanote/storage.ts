@@ -27,6 +27,15 @@ export async function getLockRecord(): Promise<LockRecord | null> { try { const 
 export async function createLock(kind: LockKind, value: string) { const salt = Crypto.randomUUID(); await secretSet(LOCK_KEY, JSON.stringify({ kind, salt, verifier: await lockHash(value, salt) } satisfies LockRecord)); }
 export async function verifyLock(value: string) { const lock = await getLockRecord(); return lock ? (await lockHash(value, lock.salt)) === lock.verifier : false; }
 export const clearLock = () => secretRemove(LOCK_KEY);
+/** Removes diary records, lock verifier, and in-app media folders. Exported backups outside the app are never touched. */
+export async function eraseLocalDiaryData(entries: DiaryEntry[]) {
+  await Promise.all(entries.map((entry) => removeEntryMedia(entry)));
+  if (Platform.OS !== "web") await Promise.all(["imanote-audio", "imanote-images", "imanote-imports"].map(async (folder) => {
+    const uri = fileFolder(folder); if ((await FileSystem.getInfoAsync(uri)).exists) await FileSystem.deleteAsync(uri, { idempotent: true });
+  }));
+  await AsyncStorage.multiRemove([SETTINGS_KEY, ENTRIES_KEY]);
+  await clearLock();
+}
 export async function preserveVoiceMemo(uri: string, id: string) { if (Platform.OS === "web" || uri.includes("/imanote-audio/")) return uri; const extension = uri.split(".").pop()?.split("?")[0] || "m4a"; const folder = fileFolder("imanote-audio"); const target = `${folder}${safeName(id)}-${Date.now()}.${extension}`; await ensureFolder(folder); await FileSystem.copyAsync({ from: uri, to: target }); return target; }
 export async function preservePhotoAttachment(attachment: PhotoAttachment, entryId: string): Promise<PhotoAttachment> { if (Platform.OS === "web" || attachment.uri.includes("/imanote-images/")) return attachment; const extension = attachment.name.split(".").pop()?.split("?")[0] || attachment.uri.split(".").pop()?.split("?")[0] || "jpg"; const folder = fileFolder("imanote-images"); const target = `${folder}${safeName(entryId)}-${safeName(attachment.id)}-${Date.now()}.${extension}`; await ensureFolder(folder); await FileSystem.copyAsync({ from: attachment.uri, to: target }); return { ...attachment, uri: target }; }
 export async function removeLocalFile(uri?: string) { if (!uri || Platform.OS === "web" || !uri.startsWith("file:")) return; if ((await FileSystem.getInfoAsync(uri)).exists) await FileSystem.deleteAsync(uri, { idempotent: true }); }

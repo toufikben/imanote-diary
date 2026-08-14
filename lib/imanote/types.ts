@@ -10,6 +10,7 @@ export type EntryFolder = "personal" | "ideas" | "family" | "work" | "travel";
 export type InkColor = "graphite" | "ocean" | "forest" | "berry" | "plum" | "copper" | "teal" | "gold";
 export type DrawingStroke = { color: string; width: number; points: Array<{ x: number; y: number }> };
 export type LockKind = "pin" | "password";
+export type AutoLockMinutes = 0 | 1 | 5 | 15;
 
 export type PhotoAttachment = { id: string; uri: string; name: string; mimeType: string; width?: number; height?: number };
 export type DiaryEntry = {
@@ -34,11 +35,11 @@ export type DiaryEntry = {
   attachments?: PhotoAttachment[];
 };
 
-export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle; dailyReminderEnabled: boolean; dailyReminderHour: number; dailyReminderMinute: number };
+export type DiarySettings = { language: AppLanguage; appearance: AppAppearance; defaultFont: EntryFont; defaultFontSize: EntryFontSize; defaultLineSpacing: EntryLineSpacing; defaultPaper: PaperStyle; dailyReminderEnabled: boolean; dailyReminderHour: number; dailyReminderMinute: number; hideReminderContent: boolean; biometricEnabled: boolean; autoLockMinutes: AutoLockMinutes };
 export type LockRecord = { kind: LockKind; salt: string; verifier: string };
 export type Palette = { background: string; surface: string; softSurface: string; text: string; muted: string; primary: string; primarySoft: string; border: string; danger: string; flower: string; leaf: string };
 
-export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0 };
+export const DEFAULT_SETTINGS: DiarySettings = { language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 };
 export const STICKER_IDS: EntrySticker[] = ["flower", "heart", "star", "coffee", "moon", "leaf", "wolf", "wolfMoon"];
 export const MOOD_IDS: EntryMood[] = ["joyful", "calm", "grateful", "reflective", "sad", "stressed"];
 export const FOLDER_IDS: EntryFolder[] = ["personal", "ideas", "family", "work", "travel"];

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decryptBackupPayload, encryptBackupPayload, validateBackupPayload } from "../lib/imanote/backup";
 import { getCopy, moodName } from "../lib/imanote/copy";
+import { deriveWellbeingInsights, gratitudePromptIndex } from "../lib/imanote/insights";
 import { getLockWolfPeekProgress } from "../lib/imanote/lock-wolf";
 import { normalizeDrawing, normalizeInkColor, normalizeMood, normalizeSettings, normalizeStickers, isValidLockValue, sortEntries } from "../lib/imanote/validation";
 
@@ -23,8 +24,8 @@ describe("Imanote privacy validation", () => {
 
 describe("Imanote local data normalization", () => {
   it("repairs malformed local settings with safe defaults", () => {
-    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45 })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45 });
-    expect(normalizeSettings({ language: "bad", appearance: "bright", dailyReminderEnabled: "yes", dailyReminderHour: 25, dailyReminderMinute: -1 })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0 });
+    expect(normalizeSettings({ language: "fr", appearance: "noir", defaultFont: "mono", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15 })).toEqual({ language: "fr", appearance: "noir", defaultFont: "mono", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: true, dailyReminderHour: 7, dailyReminderMinute: 45, hideReminderContent: false, biometricEnabled: true, autoLockMinutes: 15 });
+    expect(normalizeSettings({ language: "bad", appearance: "bright", dailyReminderEnabled: "yes", dailyReminderHour: 25, dailyReminderMinute: -1, autoLockMinutes: 2 })).toEqual({ language: "ar", appearance: "blossom", defaultFont: "classic", defaultFontSize: "medium", defaultLineSpacing: "normal", defaultPaper: "plain", dailyReminderEnabled: false, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 });
   });
   it("orders local memories by latest modification without mutating the source", () => {
     const source = [
@@ -52,6 +53,11 @@ describe("Imanote local data normalization", () => {
     expect(normalizeDrawing([{ color: "#334455", width: 3, points: [{ x: 1, y: 2 }, { x: 8, y: 9 }] }, { color: "#000", width: 99, points: [{ x: 1, y: 2 }, { x: 3, y: 4 }] }])).toEqual([{ color: "#334455", width: 3, points: [{ x: 1, y: 2 }, { x: 8, y: 9 }] }]);
     expect(normalizeDrawing("not-a-drawing")).toBeUndefined();
   });
+  it("derives private writing rhythm without network data", () => {
+    const entries = [{ id: "a", title: "", body: "", font: "classic" as const, mood: "calm" as const, createdAt: "2026-08-12T12:00:00.000Z", updatedAt: "2026-08-12T12:00:00.000Z" }, { id: "b", title: "", body: "", font: "classic" as const, mood: "grateful" as const, createdAt: "2026-08-13T12:00:00.000Z", updatedAt: "2026-08-13T12:00:00.000Z" }, { id: "draft", title: "", body: "", font: "classic" as const, isDraft: true, createdAt: "2026-08-13T13:00:00.000Z", updatedAt: "2026-08-13T13:00:00.000Z" }];
+    const result = deriveWellbeingInsights(entries, new Date("2026-08-13T16:00:00.000Z"));
+    expect(result.totalEntries).toBe(2); expect(result.streak).toBe(2); expect(result.moodTotals.calm).toBe(1); expect(result.moodTotals.grateful).toBe(1); expect(gratitudePromptIndex(new Date("2026-08-13T16:00:00.000Z"))).toBe(gratitudePromptIndex(new Date("2026-08-13T16:00:00.000Z")));
+  });
 });
 
 describe("Imanote localization", () => {
@@ -71,7 +77,7 @@ describe("Imanote encrypted local backups", () => {
   const payload = {
     version: 1 as const,
     createdAt: "2026-08-13T00:00:00.000Z",
-    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0 },
+    settings: { language: "ar" as const, appearance: "blossom" as const, defaultFont: "classic" as const, defaultFontSize: "medium" as const, defaultLineSpacing: "normal" as const, defaultPaper: "plain" as const, dailyReminderEnabled: true, dailyReminderHour: 20, dailyReminderMinute: 0, hideReminderContent: true, biometricEnabled: false, autoLockMinutes: 5 as const },
     entries: [{ id: "memory-1", title: "A flower", body: "Private", font: "classic" as const, mood: "grateful" as const, favorite: true, inkColor: "berry" as const, createdAt: "2026-08-12T00:00:00.000Z", updatedAt: "2026-08-13T00:00:00.000Z", attachments: [{ id: "photo-1", uri: "backup://photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg" }] }],
     files: [{ key: "photo:memory-1:photo-1", name: "rose.jpg", mimeType: "image/jpeg", base64: "cGhvdG8=" }],
   };

@@ -17,6 +17,9 @@ export function normalizeSettings(candidate: unknown): DiarySettings {
     dailyReminderEnabled: typeof value.dailyReminderEnabled === "boolean" ? value.dailyReminderEnabled : DEFAULT_SETTINGS.dailyReminderEnabled,
     dailyReminderHour: Number.isInteger(value.dailyReminderHour) && (value.dailyReminderHour as number) >= 0 && (value.dailyReminderHour as number) <= 23 ? value.dailyReminderHour as number : DEFAULT_SETTINGS.dailyReminderHour,
     dailyReminderMinute: Number.isInteger(value.dailyReminderMinute) && (value.dailyReminderMinute as number) >= 0 && (value.dailyReminderMinute as number) <= 59 ? value.dailyReminderMinute as number : DEFAULT_SETTINGS.dailyReminderMinute,
+    hideReminderContent: typeof value.hideReminderContent === "boolean" ? value.hideReminderContent : DEFAULT_SETTINGS.hideReminderContent,
+    biometricEnabled: typeof value.biometricEnabled === "boolean" ? value.biometricEnabled : DEFAULT_SETTINGS.biometricEnabled,
+    autoLockMinutes: value.autoLockMinutes === 0 || value.autoLockMinutes === 1 || value.autoLockMinutes === 5 || value.autoLockMinutes === 15 ? value.autoLockMinutes : DEFAULT_SETTINGS.autoLockMinutes,
   };
 }
 
