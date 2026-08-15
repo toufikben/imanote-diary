@@ -121,19 +121,29 @@ type WolfReaction = "happy" | "sad" | LockOutcome;
 
 function WalkingLockWolf({ color, isRTL, reaction, reactionKey }: { color: string; isRTL: boolean; reaction: WolfReaction; reactionKey: number }) {
   const journey = useRef(new Animated.Value(0)).current;
+  const gait = useRef(new Animated.Value(0)).current;
   const motion = useRef(new Animated.Value(0)).current;
   const [artUnavailable, setArtUnavailable] = useState(false);
 
   useEffect(() => {
-    const animation = Animated.loop(Animated.sequence([
+    const travel = Animated.loop(Animated.sequence([
       Animated.timing(journey, { toValue: 1, duration: 2300, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
       Animated.delay(120),
       Animated.timing(journey, { toValue: 0, duration: 2300, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
       Animated.delay(260),
     ]));
-    animation.start();
-    return () => animation.stop();
-  }, [journey]);
+    const steps = Animated.loop(Animated.sequence([
+      Animated.timing(gait, { toValue: 1, duration: 260, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      Animated.timing(gait, { toValue: 0, duration: 260, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      Animated.delay(45),
+    ]));
+    travel.start();
+    steps.start();
+    return () => {
+      travel.stop();
+      steps.stop();
+    };
+  }, [gait, journey]);
 
   useEffect(() => {
     motion.stopAnimation();
@@ -156,10 +166,14 @@ function WalkingLockWolf({ color, isRTL, reaction, reactionKey }: { color: strin
   }, [motion, reaction, reactionKey]);
 
   const translateX = journey.interpolate({ inputRange: [0, 0.5, 1], outputRange: isRTL ? [42, -2, -42] : [-42, 2, 42] });
-  const walkLift = journey.interpolate({ inputRange: [0, 0.2, 0.5, 0.8, 1], outputRange: [0, -6, 0, -6, 0] });
-  const walkTurn = journey.interpolate({ inputRange: [0, 0.45, 0.55, 1], outputRange: isRTL ? ["-6deg", "-6deg", "6deg", "-6deg"] : ["6deg", "6deg", "-6deg", "6deg"] });
-  const jumpLift = motion.interpolate({ inputRange: [0, 0.25, 0.6, 1], outputRange: [0, -34, -14, 0] });
-  const sadLift = motion.interpolate({ inputRange: [0, 1], outputRange: [0, 7] });
+  const walkLift = journey.interpolate({ inputRange: [0, 0.2, 0.5, 0.8, 1], outputRange: [0, -3, 0, -3, 0] });
+  const gaitLift = gait.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, -3.5, 0] });
+  const gaitSway = gait.interpolate({ inputRange: [0, 0.5, 1], outputRange: ["-2deg", "2deg", "-2deg"] });
+  const walkTurn = journey.interpolate({ inputRange: [0, 0.45, 0.55, 1], outputRange: isRTL ? ["-5deg", "-5deg", "5deg", "-5deg"] : ["5deg", "5deg", "-5deg", "5deg"] });
+  const jumpLift = motion.interpolate({ inputRange: [0, 0.18, 0.48, 0.76, 1], outputRange: [0, -10, -34, -12, 0] });
+  const sadLift = motion.interpolate({ inputRange: [0, 0.45, 1], outputRange: [0, 5, 7] });
+  const reactionLift = reaction === "sad" || reaction === "failure" ? sadLift : jumpLift;
+  const totalLift = Animated.add(Animated.add(walkLift, gaitLift), reactionLift);
   const reactionTurn = motion.interpolate({ inputRange: [0, 1], outputRange: ["0deg", reaction === "sad" || reaction === "failure" ? (isRTL ? "-8deg" : "8deg") : (isRTL ? "-13deg" : "13deg")] });
   const reactionScale = motion.interpolate({ inputRange: [0, 1], outputRange: [1, reaction === "sad" || reaction === "failure" ? 0.92 : 1.08] });
   const eyeGlowOpacity = motion.interpolate({ inputRange: [0, 0.15, 0.65, 1], outputRange: [0, reaction === "success" ? 1 : 0.2, reaction === "success" ? 0.72 : 0, 0] });
@@ -168,7 +182,7 @@ function WalkingLockWolf({ color, isRTL, reaction, reactionKey }: { color: strin
 
   return (
     <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={s.walkWolfStage}>
-      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: walkLift }, { translateY: reaction === "sad" || reaction === "failure" ? sadLift : jumpLift }, { rotate: walkTurn }, { rotate: reactionTurn }, { scale: reactionScale }, { scaleX: isRTL ? -1 : 1 }] }]}>
+      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: totalLift }, { rotate: walkTurn }, { rotate: gaitSway }, { rotate: reactionTurn }, { scale: reactionScale }, { scaleX: isRTL ? -1 : 1 }] }]}>
         {artUnavailable ? <WolfMark size={152} color={color} /> : <Image accessibilityIgnoresInvertColors source={LOCK_WOLF_ART} style={s.walkWolfArt} onError={() => setArtUnavailable(true)} />}
         {(reaction === "success" || reaction === "happy") && <Animated.View style={[s.wolfEyeGlow, { opacity: eyeGlowOpacity, transform: [{ scale: eyeGlowScale }] }]}><View style={s.wolfEyeGlowDot} /><View style={[s.wolfEyeGlowDot, s.wolfEyeGlowDotRight]} /></Animated.View>}
         {(reaction === "sad" || reaction === "failure") && <Animated.View style={[s.wolfSadEars, { transform: [{ rotate: earTilt }] }]}><Svg width={126} height={58} viewBox="0 0 58 30"><Path d="M8 25 14 3l12 18-9-3Z" fill="#6C5B55" opacity={0.92} /><Path d="m32 21 12-18 6 22-9-7Z" fill="#6C5B55" opacity={0.92} /><Path d="m14 19 2-8 5 9m18 0 5-9 2 8" stroke="#B89A88" strokeWidth={2} strokeLinecap="round" opacity={0.86} /></Svg></Animated.View>}

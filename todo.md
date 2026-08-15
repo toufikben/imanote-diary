@@ -162,3 +162,8 @@
 - [x] Fix PIN/password setup layout so the Save/Create button remains visible above the bottom safe area.
 - [x] Validate the redesigned lock screen with TypeScript, tests, and a visual preview; save a recovery checkpoint.
 - [ ] Push the approved lock-screen redesign to GitHub main after verification.
+
+
+# Wolf Motion Refinement — 2026-08-15
+- [x] Smooth the wolf's walking-to-jump-to-landing transitions without changing PIN privacy or feedback behavior.
+- [x] Validate the refined animation with TypeScript, tests, and visual preview; save a recovery checkpoint.
