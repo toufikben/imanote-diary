@@ -142,8 +142,11 @@
 - [x] Confirm that Managed publishing is disabled so the approved production release publishes automatically.
 - [x] Prepare and save Arabic and French localized Google Play store listings for Private Diary.
 - [x] Capture and prepare Arabic and French Google Play phone screenshots for Private Diary.
-- [ ] Capture and prepare Arabic and French diary-editor Google Play screenshots.
+- [x] Capture and prepare Arabic and French diary-editor Google Play screenshots.
 - [ ] Verify GitHub and Google Play upload status, then upload only after explicit confirmation.
-- [ ] Save a checkpoint after the approved screenshot and upload updates.
+- [x] Save a checkpoint after the approved screenshot and upload updates.
 
 تمت إضافة هذه المهام بتاريخ 2026-08-15 استجابة لطلب تجهيز لقطات محرر المذكرات والتحقق من الرفع.
+- [x] Skip uploading the optional Arabic/French diary-editor screenshots to Google Play after the manual file-picker blocker; keep the prepared assets in the project for a future listing update.
+
+قرار 2026-08-15: تم تجاوز الرفع الإضافي لأن اللقطات المحلية السابقة موجودة، بينما لقطتا المحرر محفوظتان داخل المشروع كأصول اختيارية مستقبلية.
