@@ -173,3 +173,10 @@
 - [x] Replace current lock-screen audio with realistic, locally bundled wolf recordings after license verification.
 - [x] Keep happy response, sad response, and long success howl mapped to the existing PIN outcomes.
 - [ ] Validate audio assets, TypeScript, tests, and lock-screen playback; save a recovery checkpoint.
+
+
+# GitHub Upload and AAB Test Build — 2026-08-15
+- [ ] Review the current diff and exclude secrets, generated files, and sensitive local data.
+- [ ] Push the approved realistic wolf audio changes and documentation to GitHub main.
+- [ ] Trigger the configured GitHub Actions production AAB test build.
+- [ ] Verify the workflow run status and report the AAB artifact or current build state.
