@@ -151,3 +151,4 @@
 
 قرار 2026-08-15: تم تجاوز الرفع الإضافي لأن اللقطات المحلية السابقة موجودة، بينما لقطتا المحرر محفوظتان داخل المشروع كأصول اختيارية مستقبلية.
 - [x] Check the current Google Play production review status and prepare, but do not submit, the next-update draft.
+- [ ] Push the latest approved project changes to GitHub main after verification.
