@@ -167,3 +167,9 @@
 # Wolf Motion Refinement — 2026-08-15
 - [x] Smooth the wolf's walking-to-jump-to-landing transitions without changing PIN privacy or feedback behavior.
 - [x] Validate the refined animation with TypeScript, tests, and visual preview; save a recovery checkpoint.
+
+
+# Real Wolf Audio Replacement — 2026-08-15
+- [x] Replace current lock-screen audio with realistic, locally bundled wolf recordings after license verification.
+- [x] Keep happy response, sad response, and long success howl mapped to the existing PIN outcomes.
+- [ ] Validate audio assets, TypeScript, tests, and lock-screen playback; save a recovery checkpoint.

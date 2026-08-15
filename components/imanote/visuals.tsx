@@ -11,9 +11,9 @@ import Svg, { Circle, Path } from "react-native-svg";
 
 const LOCK_GIRL_ART = "https://imanote-diar-wyf44srw.manus.space/manus-storage/imanote-lock-girl-background_8a64738b.png";
 const LOCK_WOLF_ART = require("@/assets/lock/wolf-hero.png");
-const LOCK_DIGIT_HAPPY_SOUND = require("@/assets/sounds/lock-digit-happy.wav");
-const LOCK_SUCCESS_SOUND = require("@/assets/sounds/lock-success-wolf-howl.wav");
-const LOCK_FAILURE_SOUND = require("@/assets/sounds/lock-failure-gentle.wav");
+const LOCK_DIGIT_HAPPY_SOUND = require("@/assets/sounds/real/wolf-happy-real.wav");
+const LOCK_SUCCESS_SOUND = require("@/assets/sounds/real/wolf-success-howl-real.wav");
+const LOCK_FAILURE_SOUND = require("@/assets/sounds/real/wolf-sad-real.wav");
 
 function Flower({ size = 100, color = "#E989A7", locked = false }: { size?: number; color?: string; locked?: boolean }) {
   return (
