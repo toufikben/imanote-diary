@@ -153,3 +153,12 @@
 - [x] Check the current Google Play production review status and prepare, but do not submit, the next-update draft.
 - [x] Push the latest approved project changes to GitHub main after verification.
 - [x] Re-check the current Google Play review status and report whether production approval is complete.
+
+
+# Lock Screen Overhaul — 2026-08-15
+- [x] Redesign PrivacyGate with a large local wolf illustration and a visible girl background layer.
+- [x] Add local-first walking, playful, jump, happy, sad, and success-howl wolf reactions tied to PIN input.
+- [x] Add separate local happy, sad, and long howl audio feedback without external runtime dependencies.
+- [x] Fix PIN/password setup layout so the Save/Create button remains visible above the bottom safe area.
+- [x] Validate the redesigned lock screen with TypeScript, tests, and a visual preview; save a recovery checkpoint.
+- [ ] Push the approved lock-screen redesign to GitHub main after verification.

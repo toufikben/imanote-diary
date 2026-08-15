@@ -6,10 +6,12 @@ import { MoodBadge } from "@/components/imanote/mood-tags";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Image, PanResponder, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Animated, Easing, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 
-const LOCK_WOLF_ART = "https://imanote-diar-wyf44srw.manus.space/manus-storage/imanote-lock-wolf_3bf9dfcd.png";
+const LOCK_GIRL_ART = "https://imanote-diar-wyf44srw.manus.space/manus-storage/imanote-lock-girl-background_8a64738b.png";
+const LOCK_WOLF_ART = require("@/assets/lock/wolf-hero.png");
+const LOCK_DIGIT_HAPPY_SOUND = require("@/assets/sounds/lock-digit-happy.wav");
 const LOCK_SUCCESS_SOUND = require("@/assets/sounds/lock-success-wolf-howl.wav");
 const LOCK_FAILURE_SOUND = require("@/assets/sounds/lock-failure-gentle.wav");
 
@@ -29,6 +31,21 @@ function Flower({ size = 100, color = "#E989A7", locked = false }: { size?: numb
       ) : (
         <Circle cx="50" cy="50" r="5" fill="#C65B7C" />
       )}
+    </Svg>
+  );
+}
+
+function GirlBackdrop() {
+  return (
+    <Svg pointerEvents="none" style={s.girlIllustration} viewBox="0 0 220 180" preserveAspectRatio="xMidYMid slice">
+      <Path d="M0 36c35-30 73-30 111-10 37-20 73-13 109 10v144H0Z" fill="#B7B7E0" opacity={0.44} />
+      <Circle cx="176" cy="36" r="22" fill="#F8E8BA" opacity={0.75} />
+      <Path d="M74 159c4-38 18-60 43-69 24 7 41 32 46 69Z" fill="#D487A6" opacity={0.86} />
+      <Path d="M91 91c-12-24-8-56 17-67 29-14 57 5 57 36 0 24-14 46-35 49-18 3-31-5-39-18Z" fill="#302C48" opacity={0.97} />
+      <Path d="M111 51c12-13 30-13 42-2 7 7 8 20 4 31-7-9-14-15-24-18-10 4-17 11-23 20-4-10-4-21 1-31Z" fill="#F1C9B4" />
+      <Path d="M111 57c6-15 24-23 39-12" stroke="#F8D8CF" strokeWidth={3} strokeLinecap="round" opacity={0.72} />
+      <Path d="M132 72c5 3 10 3 14 0" stroke="#A55F78" strokeWidth={2} strokeLinecap="round" opacity={0.8} />
+      <Path d="M66 158c12-20 25-31 45-38m47 38c-9-21-22-32-39-39" stroke="#F5D5E0" strokeWidth={3} strokeLinecap="round" opacity={0.7} />
     </Svg>
   );
 }
@@ -100,82 +117,61 @@ export function FloralSplash({ onFinish }: { onFinish: () => void }) {
 
 type LockOutcome = "success" | "failure" | null;
 
-function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string; isRTL: boolean; outcome: LockOutcome; outcomeKey: number }) {
+type WolfReaction = "happy" | "sad" | LockOutcome;
+
+function WalkingLockWolf({ color, isRTL, reaction, reactionKey }: { color: string; isRTL: boolean; reaction: WolfReaction; reactionKey: number }) {
   const journey = useRef(new Animated.Value(0)).current;
-  const reaction = useRef(new Animated.Value(0)).current;
+  const motion = useRef(new Animated.Value(0)).current;
   const [artUnavailable, setArtUnavailable] = useState(false);
 
   useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(journey, { toValue: 1, duration: 1750, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
-        Animated.delay(180),
-        Animated.timing(journey, { toValue: 0, duration: 1750, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
-        Animated.delay(300),
-      ]),
-    );
+    const animation = Animated.loop(Animated.sequence([
+      Animated.timing(journey, { toValue: 1, duration: 2300, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
+      Animated.delay(120),
+      Animated.timing(journey, { toValue: 0, duration: 2300, easing: Easing.inOut(Easing.cubic), useNativeDriver: true }),
+      Animated.delay(260),
+    ]));
     animation.start();
     return () => animation.stop();
   }, [journey]);
 
   useEffect(() => {
-    reaction.stopAnimation();
-    reaction.setValue(0);
-    if (!outcome) return;
-    const animation = outcome === "success"
+    motion.stopAnimation();
+    motion.setValue(0);
+    if (!reaction) return;
+    const animation = reaction === "sad" || reaction === "failure"
       ? Animated.sequence([
-          Animated.timing(reaction, { toValue: 1, duration: 210, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.delay(100),
-          Animated.timing(reaction, { toValue: 0, duration: 430, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+          Animated.timing(motion, { toValue: 1, duration: 260, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.delay(260),
+          Animated.timing(motion, { toValue: 0, duration: 620, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
         ])
       : Animated.sequence([
-          Animated.timing(reaction, { toValue: 1, duration: 200, easing: Easing.out(Easing.quad), useNativeDriver: true }),
-          Animated.delay(70),
-          Animated.timing(reaction, { toValue: 0, duration: 455, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
+          Animated.timing(motion, { toValue: 1, duration: 180, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(motion, { toValue: 0, duration: 240, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+          Animated.timing(motion, { toValue: 0.72, duration: 180, easing: Easing.out(Easing.quad), useNativeDriver: true }),
+          Animated.timing(motion, { toValue: 0, duration: 420, easing: Easing.inOut(Easing.quad), useNativeDriver: true }),
         ]);
     animation.start();
     return () => animation.stop();
-  }, [outcome, outcomeKey, reaction]);
+  }, [motion, reaction, reactionKey]);
 
-  const translateX = journey.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: isRTL ? [24, -3, -25] : [-24, 3, 25],
-  });
-  const lift = journey.interpolate({ inputRange: [0, 0.25, 0.5, 0.75, 1], outputRange: [0, -3, 0, -3, 0] });
-  const turn = journey.interpolate({
-    inputRange: [0, 0.42, 0.58, 1],
-    outputRange: isRTL ? ["-7deg", "-7deg", "7deg", "-7deg"] : ["7deg", "7deg", "-7deg", "7deg"],
-  });
-  const reactionLift = reaction.interpolate({ inputRange: [0, 1], outputRange: [0, outcome === "success" ? -17 : 4] });
-  const reactionTurn = reaction.interpolate({ inputRange: [0, 1], outputRange: ["0deg", outcome === "success" ? (isRTL ? "-16deg" : "16deg") : (isRTL ? "5deg" : "-5deg")] });
-  const reactionScale = reaction.interpolate({ inputRange: [0, 1], outputRange: [1, outcome === "failure" ? 0.94 : 1.04] });
-  const eyeGlowOpacity = reaction.interpolate({ inputRange: [0, 0.18, 0.72, 1], outputRange: [0, 0.95, 0.7, 0] });
-  const eyeGlowScale = reaction.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0.7, 1.18, 0.8] });
-  const sadEarTilt = reaction.interpolate({ inputRange: [0, 0.44, 0.72, 1], outputRange: ["0deg", "11deg", "6deg", "0deg"] });
+  const translateX = journey.interpolate({ inputRange: [0, 0.5, 1], outputRange: isRTL ? [42, -2, -42] : [-42, 2, 42] });
+  const walkLift = journey.interpolate({ inputRange: [0, 0.2, 0.5, 0.8, 1], outputRange: [0, -6, 0, -6, 0] });
+  const walkTurn = journey.interpolate({ inputRange: [0, 0.45, 0.55, 1], outputRange: isRTL ? ["-6deg", "-6deg", "6deg", "-6deg"] : ["6deg", "6deg", "-6deg", "6deg"] });
+  const jumpLift = motion.interpolate({ inputRange: [0, 0.25, 0.6, 1], outputRange: [0, -34, -14, 0] });
+  const sadLift = motion.interpolate({ inputRange: [0, 1], outputRange: [0, 7] });
+  const reactionTurn = motion.interpolate({ inputRange: [0, 1], outputRange: ["0deg", reaction === "sad" || reaction === "failure" ? (isRTL ? "-8deg" : "8deg") : (isRTL ? "-13deg" : "13deg")] });
+  const reactionScale = motion.interpolate({ inputRange: [0, 1], outputRange: [1, reaction === "sad" || reaction === "failure" ? 0.92 : 1.08] });
+  const eyeGlowOpacity = motion.interpolate({ inputRange: [0, 0.15, 0.65, 1], outputRange: [0, reaction === "success" ? 1 : 0.2, reaction === "success" ? 0.72 : 0, 0] });
+  const eyeGlowScale = motion.interpolate({ inputRange: [0, 0.35, 1], outputRange: [0.7, 1.2, 0.85] });
+  const earTilt = motion.interpolate({ inputRange: [0, 0.5, 1], outputRange: ["0deg", reaction === "sad" || reaction === "failure" ? "12deg" : "-7deg", "0deg"] });
 
   return (
     <View pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" style={s.walkWolfStage}>
-      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: lift }, { translateY: reactionLift }, { rotate: turn }, { rotate: reactionTurn }, { scale: reactionScale }, { scaleX: isRTL ? -1 : 1 }] }]}> 
-        {artUnavailable ? (
-          <WolfMark size={58} color={color} />
-        ) : (
-          <Image accessibilityIgnoresInvertColors source={{ uri: LOCK_WOLF_ART }} style={s.walkWolfArt} onError={() => setArtUnavailable(true)} />
-        )}
-        {outcome === "success" && (
-          <Animated.View style={[s.wolfEyeGlow, { opacity: eyeGlowOpacity, transform: [{ scale: eyeGlowScale }] }]}> 
-            <View style={s.wolfEyeGlowDot} />
-            <View style={[s.wolfEyeGlowDot, s.wolfEyeGlowDotRight]} />
-          </Animated.View>
-        )}
-        {outcome === "failure" && (
-          <Animated.View style={[s.wolfSadEars, { transform: [{ rotate: sadEarTilt }] }]}> 
-            <Svg width={58} height={30} viewBox="0 0 58 30">
-              <Path d="M8 25 14 3l12 18-9-3Z" fill="#6C5B55" opacity={0.92} />
-              <Path d="m32 21 12-18 6 22-9-7Z" fill="#6C5B55" opacity={0.92} />
-              <Path d="m14 19 2-8 5 9m18 0 5-9 2 8" stroke="#B89A88" strokeWidth={2} strokeLinecap="round" opacity={0.86} />
-            </Svg>
-          </Animated.View>
-        )}
+      <Animated.View style={[s.walkWolf, { transform: [{ translateX }, { translateY: walkLift }, { translateY: reaction === "sad" || reaction === "failure" ? sadLift : jumpLift }, { rotate: walkTurn }, { rotate: reactionTurn }, { scale: reactionScale }, { scaleX: isRTL ? -1 : 1 }] }]}>
+        {artUnavailable ? <WolfMark size={152} color={color} /> : <Image accessibilityIgnoresInvertColors source={LOCK_WOLF_ART} style={s.walkWolfArt} onError={() => setArtUnavailable(true)} />}
+        {(reaction === "success" || reaction === "happy") && <Animated.View style={[s.wolfEyeGlow, { opacity: eyeGlowOpacity, transform: [{ scale: eyeGlowScale }] }]}><View style={s.wolfEyeGlowDot} /><View style={[s.wolfEyeGlowDot, s.wolfEyeGlowDotRight]} /></Animated.View>}
+        {(reaction === "sad" || reaction === "failure") && <Animated.View style={[s.wolfSadEars, { transform: [{ rotate: earTilt }] }]}><Svg width={126} height={58} viewBox="0 0 58 30"><Path d="M8 25 14 3l12 18-9-3Z" fill="#6C5B55" opacity={0.92} /><Path d="m32 21 12-18 6 22-9-7Z" fill="#6C5B55" opacity={0.92} /><Path d="m14 19 2-8 5 9m18 0 5-9 2 8" stroke="#B89A88" strokeWidth={2} strokeLinecap="round" opacity={0.86} /></Svg></Animated.View>}
       </Animated.View>
     </View>
   );
@@ -183,6 +179,7 @@ function WalkingLockWolf({ color, isRTL, outcome, outcomeKey }: { color: string;
 
 export function PrivacyGate() {
   const { accessState, configureLock, unlock, unlockWithBiometrics, settings, copy, palette, isRTL } = useDiary();
+  const digitHappySound = useAudioPlayer(LOCK_DIGIT_HAPPY_SOUND);
   const successSound = useAudioPlayer(LOCK_SUCCESS_SOUND);
   const failureSound = useAudioPlayer(LOCK_FAILURE_SOUND);
   const [kind, setKind] = useState<LockKind>("pin");
@@ -191,26 +188,42 @@ export function PrivacyGate() {
   const [error, setError] = useState("");
   const [biometricBusy, setBiometricBusy] = useState(false);
   const [lockOutcome, setLockOutcome] = useState<{ type: LockOutcome; key: number }>({ type: null, key: 0 });
+  const [wolfReaction, setWolfReaction] = useState<WolfReaction>(null);
+  const [wolfReactionKey, setWolfReactionKey] = useState(0);
   const setup = accessState === "setup";
   const pin = kind === "pin";
   const active = setup && first.length === 4 ? confirm : first;
   const security = securityCopy(settings.language);
-  const playLockResult = (accepted: boolean) => {
-    setLockOutcome({ type: accepted ? "success" : "failure", key: Date.now() });
+  const playWolfSound = (player: typeof successSound) => {
     if (!settings.lockSoundsEnabled) return;
-    const player = accepted ? successSound : failureSound;
     void setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
     player.seekTo(0);
     player.play();
+  };
+  const playLockResult = (accepted: boolean) => {
+    const key = Date.now();
+    setLockOutcome({ type: accepted ? "success" : "failure", key });
+    setWolfReaction(accepted ? "success" : "failure");
+    setWolfReactionKey(key);
+    const player = accepted ? successSound : failureSound;
+    playWolfSound(player);
   };
 
   const submit = async () => {
     setError("");
     if (setup) {
       if (!isValidLockValue(kind, first)) return setError(copy.invalidPin);
-      if (first !== confirm) return setError(copy.mismatch);
+      if (first !== confirm) {
+        setWolfReaction("sad");
+        setWolfReactionKey(Date.now());
+        playWolfSound(failureSound);
+        return setError(copy.mismatch);
+      }
       await configureLock(kind, first);
     } else if (!isValidLockValue(kind, first)) {
+      setWolfReaction("sad");
+      setWolfReactionKey(Date.now());
+      playWolfSound(failureSound);
       setError(pin ? copy.invalidPin : copy.wrongLock);
     } else {
       const accepted = await unlock(first);
@@ -225,6 +238,9 @@ export function PrivacyGate() {
     }
     if (first.length < 4) setFirst((current) => `${current}${value}`);
     else if (setup && confirm.length < 4) setConfirm((current) => `${current}${value}`);
+    setWolfReaction("happy");
+    setWolfReactionKey(Date.now());
+    playWolfSound(digitHappySound);
   };
   const useBiometrics = async () => {
     setError(""); setBiometricBusy(true);
@@ -237,6 +253,7 @@ export function PrivacyGate() {
   return (
     <View style={[s.gate, { backgroundColor: palette.background }]}>
       <View style={[s.gateBubble, { backgroundColor: palette.primarySoft }]} />
+      <ScrollView contentContainerStyle={s.gateScroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
       <View style={s.gateContent}>
         <Flower size={92} color={palette.flower} locked />
         <Text style={[s.gateTitle, { color: palette.text, textAlign: isRTL ? "right" : "left" }]}>Imanote</Text>
@@ -254,7 +271,9 @@ export function PrivacyGate() {
           <View style={s.pinBlock}>
             <Text style={[s.hint, { color: palette.muted }]}>{setup ? first.length < 4 ? copy.choosePin : copy.confirmPin : copy.enterPin}</Text>
             <View style={s.lockSurface}>
-              <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
+              <GirlBackdrop />
+              <Image source={{ uri: LOCK_GIRL_ART }} style={s.girlBackdrop} resizeMode="cover" accessibilityIgnoresInvertColors />
+              <WalkingLockWolf color={palette.primary} isRTL={isRTL} reaction={wolfReaction ?? lockOutcome.type} reactionKey={wolfReactionKey || lockOutcome.key} />
               <View style={s.dots}>
                 {[0, 1, 2, 3].map((item) => <View key={item} style={[s.dot, { backgroundColor: item < active.length ? palette.primary : palette.border }]} />)}
               </View>
@@ -270,12 +289,16 @@ export function PrivacyGate() {
         ) : (
           <View style={s.passwordBlock}>
             <View style={s.lockSurface}>
-              <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
+              <GirlBackdrop />
+              <Image source={{ uri: LOCK_GIRL_ART }} style={s.girlBackdrop} resizeMode="cover" accessibilityIgnoresInvertColors />
+              <WalkingLockWolf color={palette.primary} isRTL={isRTL} reaction={wolfReaction ?? lockOutcome.type} reactionKey={wolfReactionKey || lockOutcome.key} />
               <TextInput value={first} onChangeText={setFirst} placeholder={setup ? copy.choosePassword : copy.enterPassword} placeholderTextColor={palette.muted} secureTextEntry autoCapitalize="none" style={[s.input, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, textAlign: isRTL ? "right" : "left" }]} />
             </View>
             {setup && (
               <View style={s.lockSurface}>
-                <WalkingLockWolf color={palette.primary} isRTL={isRTL} outcome={lockOutcome.type} outcomeKey={lockOutcome.key} />
+                <GirlBackdrop />
+              <Image source={{ uri: LOCK_GIRL_ART }} style={s.girlBackdrop} resizeMode="cover" accessibilityIgnoresInvertColors />
+              <WalkingLockWolf color={palette.primary} isRTL={isRTL} reaction={wolfReaction ?? lockOutcome.type} reactionKey={wolfReactionKey || lockOutcome.key} />
                 <TextInput value={confirm} onChangeText={setConfirm} placeholder={copy.confirmPassword} placeholderTextColor={palette.muted} secureTextEntry autoCapitalize="none" style={[s.input, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, textAlign: isRTL ? "right" : "left" }]} />
               </View>
             )}
@@ -287,6 +310,7 @@ export function PrivacyGate() {
           <Text style={s.primaryText}>{setup ? copy.createLock : copy.unlock}</Text>
         </Pressable>
       </View>
+      </ScrollView>
     </View>
   );
 }
@@ -345,33 +369,36 @@ const s = StyleSheet.create({
   haloA: { position: "absolute", width: 330, height: 330, borderRadius: 165, backgroundColor: "#DEE5FA", top: 94, left: -74 },
   haloB: { position: "absolute", width: 300, height: 300, borderRadius: 150, backgroundColor: "#F8DCE6", bottom: 40, right: -100, opacity: 0.52 },
   splashFlower: { position: "absolute", top: "43%", left: "50%", transform: [{ translateX: -58 }, { translateY: -58 }] },
-  gate: { flex: 1, justifyContent: "center", padding: 24, overflow: "hidden" },
+  gate: { flex: 1, paddingHorizontal: 20, overflow: "hidden" },
+  gateScroll: { flexGrow: 1, justifyContent: "center", paddingTop: 24, paddingBottom: 28 },
   gateBubble: { position: "absolute", width: 350, height: 350, borderRadius: 175, right: -125, top: -135 },
-  gateContent: { width: "100%", maxWidth: 430, alignSelf: "center", gap: 17 },
+  gateContent: { width: "100%", maxWidth: 430, alignSelf: "center", gap: 12 },
   gateTitle: { fontSize: 29, lineHeight: 37, fontWeight: "800" },
   gateBody: { fontSize: 15, lineHeight: 23 },
   segments: { flexDirection: "row", gap: 9 },
   segment: { flex: 1, minHeight: 48, borderWidth: 1, borderRadius: 15, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 },
-  pinBlock: { gap: 15 },
+  pinBlock: { gap: 12 },
   hint: { textAlign: "center", fontSize: 14, fontWeight: "700" },
-  lockSurface: { position: "relative", alignItems: "center", minHeight: 72, overflow: "visible" },
-  walkWolfStage: { position: "absolute", top: -16, width: 126, height: 60, alignItems: "center", justifyContent: "center", zIndex: 2 },
-  walkWolf: { position: "absolute", width: 58, height: 58 },
-  walkWolfArt: { width: 58, height: 58, resizeMode: "contain" },
-  wolfEyeGlow: { position: "absolute", left: 17, top: 17, width: 26, height: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  wolfEyeGlowDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: "#F7D56A", shadowColor: "#F4B942", shadowOpacity: 0.95, shadowRadius: 7, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
-  wolfEyeGlowDotRight: { marginLeft: 1 },
-  wolfSadEars: { position: "absolute", left: 0, top: 0, width: 58, height: 30, alignItems: "center", justifyContent: "flex-start" },
-  dots: { flexDirection: "row", justifyContent: "center", gap: 14, marginTop: 28, zIndex: 1 },
+  lockSurface: { position: "relative", alignItems: "center", minHeight: 214, borderRadius: 30, overflow: "hidden", paddingTop: 148 },
+  girlBackdrop: { position: "absolute", width: "100%", height: "100%", opacity: 0.18, borderRadius: 30 },
+  girlIllustration: { position: "absolute", width: "100%", height: "100%", opacity: 0.9, zIndex: 0 },
+  walkWolfStage: { position: "absolute", top: 18, width: "100%", height: 180, alignItems: "center", justifyContent: "center", zIndex: 2 },
+  walkWolf: { position: "absolute", width: 164, height: 164 },
+  walkWolfArt: { width: 164, height: 164, resizeMode: "contain" },
+  wolfEyeGlow: { position: "absolute", left: 48, top: 49, width: 68, height: 22, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  wolfEyeGlowDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: "#F7D56A", shadowColor: "#F4B942", shadowOpacity: 0.95, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  wolfEyeGlowDotRight: { marginLeft: 2 },
+  wolfSadEars: { position: "absolute", left: 18, top: 9, width: 126, height: 58, alignItems: "center", justifyContent: "flex-start" },
+  dots: { flexDirection: "row", justifyContent: "center", gap: 14, marginTop: 12, zIndex: 3 },
   dot: { width: 13, height: 13, borderRadius: 7 },
-  keypad: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 10 },
+  keypad: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 9, marginTop: 2 },
   key: { width: "29%", aspectRatio: 1.28, borderRadius: 17, alignItems: "center", justifyContent: "center" },
   keyText: { fontSize: 23, fontWeight: "700" },
   passwordBlock: { gap: 12 },
   input: { minHeight: 54, width: "100%", marginTop: 20, paddingHorizontal: 16, fontSize: 16, borderRadius: 16, borderWidth: 1, zIndex: 1 },
   error: { textAlign: "center", fontSize: 14, fontWeight: "700" },
   biometric: { minHeight: 50, borderRadius: 16, borderWidth: 1, alignItems: "center", justifyContent: "center", gap: 8 },
-  primary: { minHeight: 54, borderRadius: 17, alignItems: "center", justifyContent: "center" },
+  primary: { minHeight: 56, borderRadius: 17, alignItems: "center", justifyContent: "center", marginTop: 2, marginBottom: 4 },
   primaryText: { color: "#fff", fontSize: 16, fontWeight: "800" },
   card: { borderWidth: 1, borderRadius: 20, padding: 15, marginBottom: 11 },
   cardRow: { gap: 12, alignItems: "flex-start" },
