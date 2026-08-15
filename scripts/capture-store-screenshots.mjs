@@ -157,6 +157,39 @@ async function captureLocale(cdp, language) {
   await click(cdp, unlockPoint);
   await sleep(700);
   await capture(cdp, `${outputDir}/02-home-${code}.png`);
+
+  const newMemoryLabel = language === "ar" ? "ذكرى جديدة" : "Nouveau souvenir";
+  const newMemoryResponse = await evaluate(cdp, `(() => {
+    const textNode = [...document.querySelectorAll('div')].find((element) => element.textContent?.trim() === ${JSON.stringify(newMemoryLabel)});
+    const node = textNode?.closest('[tabindex="0"]');
+    if (!node) throw new Error('New-memory card not found');
+    const box = node.getBoundingClientRect();
+    return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+  })()`);
+  const newMemoryPoint = newMemoryResponse.result?.result?.value ?? newMemoryResponse.result?.value;
+  if (!newMemoryPoint) throw new Error(`New-memory coordinate lookup failed: ${JSON.stringify(newMemoryResponse)}`);
+  await click(cdp, newMemoryPoint);
+  await sleep(900);
+
+  const demoTitle = language === "ar" ? "لحظة تستحق التذكر" : "Un instant à garder";
+  const demoBody = language === "ar"
+    ? "أكتب هنا ما أريد الاحتفاظ به من هذا اليوم الجميل."
+    : "J’écris ici ce que je souhaite garder de cette belle journée.";
+  await evaluate(cdp, `(() => {
+    const fields = [...document.querySelectorAll('input, textarea')];
+    const setValue = (element, value) => {
+      const prototype = element instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+      const setter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+      setter?.call(element, value);
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      element.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    if (fields[0]) setValue(fields[0], ${JSON.stringify(demoTitle)});
+    if (fields[1]) setValue(fields[1], ${JSON.stringify(demoBody)});
+    window.scrollTo(0, 0);
+  })()`);
+  await sleep(450);
+  await capture(cdp, `${outputDir}/03-editor-${code}.png`);
 }
 
 rmSync(profileDir, { recursive: true, force: true });
