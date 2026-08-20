@@ -193,3 +193,12 @@
 [2] [Google Play — حدود الوصف وممارسات القائمة](https://support.google.com/googleplay/android-developer/answer/13393723?hl=en-GB)
 
 [3] [Expo — إدارة أرقام إصدارات التطبيقات](https://docs.expo.dev/build-reference/app-versions/)
+
+## Next update — version 1.0.1
+
+- Version name updated from 1.0.0 to 1.0.1 in `app.config.ts`.
+- EAS production keeps remote automatic version-code increments enabled to avoid duplicate Play version codes.
+- Added a localized in-app dedication and support card in Settings for Arabic, French, and English.
+- The card contains the owner-provided emails and WhatsApp number as intentionally public app contact details.
+- TypeScript and Vitest passed locally: 16 tests passed, 1 unrelated auth test skipped.
+- AAB build and Google Play upload remain pending; no store submission was made by this change.

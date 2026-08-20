@@ -180,3 +180,18 @@
 - [ ] Push the approved realistic wolf audio changes and documentation to GitHub main.
 - [ ] Trigger the configured GitHub Actions production AAB test build.
 - [ ] Verify the workflow run status and report the AAB artifact or current build state.
+
+
+# Google Play Update Upload — 2026-08-15
+- [ ] Check whether the latest GitHub Actions AAB request has completed and locate the build artifact.
+- [ ] Review version code, package identifier, signing, and release notes before store upload.
+- [ ] Upload the approved AAB to the appropriate Google Play release draft without publishing it automatically.
+- [ ] Confirm the Play Console release status and provide the final publish step to the owner.
+
+
+# Version Update and Dedication — 2026-08-20
+- [x] Check whether the dedication and contact details already exist in the app before adding them.
+- [x] Increase the app version and Android version code for the next release.
+- [x] Add the requested dedication and contact details to the appropriate About/support screen.
+- [x] Run TypeScript and tests, update release notes, and verify no sensitive value is exposed unintentionally.
+- [ ] Save a checkpoint and prepare the new AAB build request; do not push to GitHub without explicit confirmation.

@@ -43,7 +43,7 @@ const config: ExpoConfig = {
   slug: env.appSlug,
   // Keep automated EAS builds associated with the Expo account selected for this diary.
   owner: "toufikben2s-team",
-  version: "1.0.0",
+  version: "1.0.1",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
