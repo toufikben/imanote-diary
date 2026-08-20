@@ -207,3 +207,10 @@
 - [x] Rewrite the dedication with a soft floral tone and highlight “رفيقة دربي إيمان”.
 - [x] Add restrained floral decoration to the dedication card while preserving RTL and translations.
 - [x] Validate the card layout and language strings, then save a recovery checkpoint.
+
+
+# Contact Review and Play Upload Preparation — 2026-08-20
+- [x] Review the two email addresses and WhatsApp number in the in-app dedication/support card for exactness and formatting.
+- [x] Check whether the same contact details appear in the Google Play store listing or developer profile and flag any public exposure.
+- [ ] Verify version 1.0.1, package identifier, version code, release notes, and AAB readiness.
+- [ ] Prepare the Google Play release draft without submitting it for review or publishing it.
