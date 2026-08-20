@@ -201,3 +201,9 @@
 - [x] Remove all wolf sound playback from the PIN screen, including happy, sad, and long howl sounds.
 - [x] Keep the wolf's visual animations and PIN feedback behavior working without audio dependencies.
 - [x] Validate TypeScript and tests, then save a recovery checkpoint.
+
+
+# Dedication Decoration — 2026-08-20
+- [x] Rewrite the dedication with a soft floral tone and highlight “رفيقة دربي إيمان”.
+- [x] Add restrained floral decoration to the dedication card while preserving RTL and translations.
+- [x] Validate the card layout and language strings, then save a recovery checkpoint.
