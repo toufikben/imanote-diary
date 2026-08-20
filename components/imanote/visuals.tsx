@@ -4,16 +4,13 @@ import { securityCopy } from "@/lib/imanote/copy";
 import type { DiaryEntry, LockKind } from "@/lib/imanote/types";
 import { MoodBadge } from "@/components/imanote/mood-tags";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 
 const LOCK_GIRL_ART = "https://imanote-diar-wyf44srw.manus.space/manus-storage/imanote-lock-girl-background_8a64738b.png";
 const LOCK_WOLF_ART = require("@/assets/lock/wolf-hero.png");
-const LOCK_DIGIT_HAPPY_SOUND = require("@/assets/sounds/real/wolf-happy-real.wav");
-const LOCK_SUCCESS_SOUND = require("@/assets/sounds/real/wolf-success-howl-real.wav");
-const LOCK_FAILURE_SOUND = require("@/assets/sounds/real/wolf-sad-real.wav");
 
 function Flower({ size = 100, color = "#E989A7", locked = false }: { size?: number; color?: string; locked?: boolean }) {
   return (
@@ -193,9 +190,6 @@ function WalkingLockWolf({ color, isRTL, reaction, reactionKey }: { color: strin
 
 export function PrivacyGate() {
   const { accessState, configureLock, unlock, unlockWithBiometrics, settings, copy, palette, isRTL } = useDiary();
-  const digitHappySound = useAudioPlayer(LOCK_DIGIT_HAPPY_SOUND);
-  const successSound = useAudioPlayer(LOCK_SUCCESS_SOUND);
-  const failureSound = useAudioPlayer(LOCK_FAILURE_SOUND);
   const [kind, setKind] = useState<LockKind>("pin");
   const [first, setFirst] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -208,19 +202,11 @@ export function PrivacyGate() {
   const pin = kind === "pin";
   const active = setup && first.length === 4 ? confirm : first;
   const security = securityCopy(settings.language);
-  const playWolfSound = (player: typeof successSound) => {
-    if (!settings.lockSoundsEnabled) return;
-    void setAudioModeAsync({ playsInSilentMode: true }).catch(() => undefined);
-    player.seekTo(0);
-    player.play();
-  };
   const playLockResult = (accepted: boolean) => {
     const key = Date.now();
     setLockOutcome({ type: accepted ? "success" : "failure", key });
     setWolfReaction(accepted ? "success" : "failure");
     setWolfReactionKey(key);
-    const player = accepted ? successSound : failureSound;
-    playWolfSound(player);
   };
 
   const submit = async () => {
@@ -230,14 +216,12 @@ export function PrivacyGate() {
       if (first !== confirm) {
         setWolfReaction("sad");
         setWolfReactionKey(Date.now());
-        playWolfSound(failureSound);
         return setError(copy.mismatch);
       }
       await configureLock(kind, first);
     } else if (!isValidLockValue(kind, first)) {
       setWolfReaction("sad");
       setWolfReactionKey(Date.now());
-      playWolfSound(failureSound);
       setError(pin ? copy.invalidPin : copy.wrongLock);
     } else {
       const accepted = await unlock(first);
@@ -254,7 +238,6 @@ export function PrivacyGate() {
     else if (setup && confirm.length < 4) setConfirm((current) => `${current}${value}`);
     setWolfReaction("happy");
     setWolfReactionKey(Date.now());
-    playWolfSound(digitHappySound);
   };
   const useBiometrics = async () => {
     setError(""); setBiometricBusy(true);

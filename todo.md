@@ -195,3 +195,9 @@
 - [x] Add the requested dedication and contact details to the appropriate About/support screen.
 - [x] Run TypeScript and tests, update release notes, and verify no sensitive value is exposed unintentionally.
 - [ ] Save a checkpoint and prepare the new AAB build request; do not push to GitHub without explicit confirmation.
+
+
+# Remove Wolf Audio — 2026-08-20
+- [x] Remove all wolf sound playback from the PIN screen, including happy, sad, and long howl sounds.
+- [x] Keep the wolf's visual animations and PIN feedback behavior working without audio dependencies.
+- [x] Validate TypeScript and tests, then save a recovery checkpoint.
