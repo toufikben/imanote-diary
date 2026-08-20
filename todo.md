@@ -214,3 +214,23 @@
 - [x] Check whether the same contact details appear in the Google Play store listing or developer profile and flag any public exposure.
 - [ ] Verify version 1.0.1, package identifier, version code, release notes, and AAB readiness.
 - [ ] Prepare the Google Play release draft without submitting it for review or publishing it.
+
+
+# Local AAB Build Guide — 2026-08-20
+- [ ] Follow the local Android SDK/Java setup and build the version 1.0.1 AAB outside EAS.
+- [ ] Verify versionCode is greater than the published code 4 and confirm the upload-key signing.
+- [ ] Upload the locally built AAB to a Google Play release draft without submitting it automatically.
+
+
+# Local Build and Play Upload Attempt — 2026-08-20
+- [ ] Verify the latest app version, versionCode, package identifier, and local signing configuration.
+- [ ] Build the latest AAB locally using a memory-conscious Android Gradle path or a successful alternative.
+- [ ] Inspect the AAB signature and manifest before any upload.
+- [ ] Upload the verified AAB to a Google Play draft only; do not submit or publish without confirmation.
+
+
+# GitHub-hosted Local Android Build — 2026-08-20
+- [ ] Review the existing Android workflow and identify its EAS-dependent steps.
+- [ ] Prepare a GitHub-hosted Gradle AAB workflow with secure signing inputs.
+- [ ] Validate workflow syntax and document required GitHub Secrets without exposing values.
+- [ ] Push the workflow only after explicit user confirmation, then monitor the AAB artifact.
